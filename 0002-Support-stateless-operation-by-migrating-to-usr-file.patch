@@ -1,0 +1,26 @@
+From 4517bd7b6d5c9d79c27f58a100b8f0030e3195b6 Mon Sep 17 00:00:00 2001
+From: Michael Ikey Doherty <michael.i.doherty@intel.com>
+Date: Fri, 30 Jan 2015 15:40:18 +0000
+Subject: [PATCH 2/3] Support stateless operation by migrating to /usr
+ filesystem
+
+Signed-off-by: Michael Ikey Doherty <michael.i.doherty@intel.com>
+---
+ support-files/rpm/my.cnf | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/support-files/rpm/my.cnf b/support-files/rpm/my.cnf
+index 913b88f..c1112bf 100644
+--- a/support-files/rpm/my.cnf
++++ b/support-files/rpm/my.cnf
+@@ -7,5 +7,6 @@
+ #
+ # include all files from the config directory
+ #
+-!includedir /etc/my.cnf.d
++!includedir /usr/share/defaults/mariadb/my.cnf.d
+ 
++!includeoptdir /etc/mariadb
+-- 
+1.9.1
+
