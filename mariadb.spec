@@ -1,6 +1,6 @@
 Name:           mariadb
 Version:        10.0.25
-Release:        35
+Release:        36
 URL:            http://mariadb.org
 Source0:	https://downloads.mariadb.org/f/mariadb-10.0.25/source/mariadb-10.0.25.tar.gz
 Source1:        mariadb.service
@@ -25,7 +25,7 @@ BuildRequires:  pkgconfig(libpcre)
 BuildRequires:  systemd
 BuildRequires:  zlib-dev
 
-Requires:       %{name}-config
+Requires:       mariadb-config
 
 %description
 MariaDB is a community developed branch of MySQL.
@@ -37,8 +37,8 @@ contains the standard MariaDB/MySQL client programs and generic MySQL files.
 %package dev
 Summary: dev components for the mariadb package.
 Group: Development
-Requires: %{name}
-Requires: %{name}-server
+Requires: mariadb
+Requires: mariadb-server
 
 %description dev
 dev components for the mariadb package.
@@ -46,7 +46,7 @@ dev components for the mariadb package.
 %package doc
 Summary: doc components for the mariadb package.
 Group: Documentation
-Requires: %{name}
+Requires: mariadb
 
 %description doc
 doc components for the mariadb package.
@@ -61,8 +61,8 @@ config components for the mariadb package.
 %package test
 Summary: test components for the mariadb package.
 Group: Development/Tools
-Requires: %{name}
-Requires: %{name}-server
+Requires: mariadb
+Requires: mariadb-server
 
 %description test
 test components for the mariadb package.
@@ -70,7 +70,7 @@ test components for the mariadb package.
 %package embedded
 Summary: MariaDB as an embeddable library
 Group: Development/Tools
-Requires: %{name}
+Requires: mariadb
 
 %description embedded
 MariaDB is a multi-user, multi-threaded SQL database server. This
@@ -81,8 +81,8 @@ MariaDB is a community developed branch of MySQL.
 %package server
 Summary:  The MariaDB server and related files
 Group: Development/Tools
-Requires: %{name}
-Requires: %{name}-config
+Requires: mariadb
+Requires: mariadb-config
 
 %description server
 MariaDB is a multi-user, multi-threaded SQL database server. It is a
@@ -253,5 +253,5 @@ install -m 0755 %{SOURCE3} %{buildroot}/usr/bin/mysql-systemd-start
 
 %files doc
 /usr/share/doc/mariadb
-%{_mandir}/man1/*.1
-%{_mandir}/man8/*.8
+/usr/share/man/man1/*.1
+/usr/share/man/man8/*.8
