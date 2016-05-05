@@ -1,6 +1,6 @@
 Name:           mariadb
 Version:        10.0.25
-Release:        36
+Release:        37
 URL:            http://mariadb.org
 Source0:	https://downloads.mariadb.org/f/mariadb-10.0.25/source/mariadb-10.0.25.tar.gz
 Source1:        mariadb.service
