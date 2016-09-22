@@ -1,8 +1,8 @@
 Name:           mariadb
-Version:        10.0.26
-Release:        38
+Version:        10.0.27
+Release:        39
 URL:            http://mariadb.org
-Source0:	https://downloads.mariadb.org/f/mariadb-10.0.26/source/mariadb-10.0.26.tar.gz
+Source0:	https://downloads.mariadb.org/f/mariadb-10.0.27/source/mariadb-10.0.27.tar.gz
 Source1:        mariadb.service
 Source2:        mariadb.tmpfiles
 Source3:        mysql-systemd-start
