@@ -1,6 +1,6 @@
 Name:           mariadb
 Version:        10.0.27
-Release:        39
+Release:        40
 URL:            http://mariadb.org
 Source0:	https://downloads.mariadb.org/f/mariadb-10.0.27/source/mariadb-10.0.27.tar.gz
 Source1:        mariadb.service
