@@ -1,0 +1,12 @@
+[Unit]
+Description=Initialize the MariaDB database
+After=syslog.target
+ConditionPathExists=!/var/lib/mysql/mysql
+
+[Service]
+Type=oneshot
+ExecStartPre=/usr/bin/install -d -m 0700 -omysql -gmysql /var/lib/mysql
+ExecStart=/usr/bin/mysql_install_db --rpm --datadir=/var/lib/mysql --user=mysql
+
+[Install]
+WantedBy=multi-user.target

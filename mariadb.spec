@@ -1,11 +1,12 @@
 Name:           mariadb
 Version:        10.0.28
-Release:        41
+Release:        42
 URL:            http://mariadb.org
-Source0:	https://downloads.mariadb.org/f/mariadb-10.0.28/source/mariadb-10.0.28.tar.gz
+Source0:        https://downloads.mariadb.org/f/mariadb-10.0.28/source/mariadb-10.0.28.tar.gz
 Source1:        mariadb.service
 Source2:        mariadb.tmpfiles
 Source3:        mysql-systemd-start
+Source4:        mariadb-install-db.service
 Patch0:         0002-Support-stateless-operation-by-migrating-to-usr-file.patch
 Patch1:         0003-Support-includeoptdir-for-non-fatal-inclusion-of-dir.patch
 Summary:        MariaDB is a drop-in replacement for MySQL.
@@ -142,6 +143,7 @@ cd clr-build
 %make_install
 mkdir -p %{buildroot}/usr/lib/systemd/system
 install -m 0644 %{SOURCE1} %{buildroot}/usr/lib/systemd/system/mariadb.service
+install -m 0644 %{SOURCE4} %{buildroot}/usr/lib/systemd/system/mariadb-install-db.service
 mkdir -p %{buildroot}/usr/lib/tmpfiles.d
 install -m 0644 %{SOURCE2} %{buildroot}/usr/lib/tmpfiles.d/mariadb.conf
 install -m 0755 %{SOURCE3} %{buildroot}/usr/bin/mysql-systemd-start
@@ -192,6 +194,7 @@ install -m 0755 %{SOURCE3} %{buildroot}/usr/bin/mysql-systemd-start
 
 %files server
 /usr/lib/systemd/system/mariadb.service
+/usr/lib/systemd/system/mariadb-install-db.service
 /usr/lib/tmpfiles.d/mariadb.conf
 /usr/bin/mysql-systemd-start
 /usr/bin/aria_chk

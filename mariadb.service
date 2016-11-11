@@ -1,16 +1,13 @@
 [Unit]
 Description=MariaDB database server
 After=syslog.target
+After=mariadb-install-db.service
+Requires=mariadb-install-db.service
 
 [Service]
 User=mysql
 Group=mysql
-PermissionsStartOnly=true
-
-ExecStartPre=/usr/bin/mysql-systemd-start pre
 ExecStart=/usr/bin/mysqld --pid-file=/run/mariadb/mariadb.pid
-ExecStartPost=/usr/bin/mysql-systemd-start post
-
 TimeoutSec=300
 Restart=always
 PrivateTmp=true
