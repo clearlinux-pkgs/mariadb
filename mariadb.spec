@@ -1,6 +1,6 @@
 Name:           mariadb
 Version:        10.0.28
-Release:        42
+Release:        43
 URL:            http://mariadb.org
 Source0:        https://downloads.mariadb.org/f/mariadb-10.0.28/source/mariadb-10.0.28.tar.gz
 Source1:        mariadb.service
@@ -18,6 +18,7 @@ BuildRequires:  bison
 BuildRequires:  boost-dev
 BuildRequires:  cmake
 BuildRequires:  jemalloc-dev
+BuildRequires:  mariadb-test
 BuildRequires:  libaio-dev
 BuildRequires:  libxml2-dev
 BuildRequires:  ncurses-dev
