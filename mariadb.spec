@@ -1,6 +1,6 @@
 Name:           mariadb
 Version:        10.0.28
-Release:        43
+Release:        44
 URL:            http://mariadb.org
 Source0:        https://downloads.mariadb.org/f/mariadb-10.0.28/source/mariadb-10.0.28.tar.gz
 Source1:        mariadb.service
@@ -104,6 +104,7 @@ cd clr-build
 cmake .. -G "Unix Makefiles" \
     -DCMAKE_INSTALL_PREFIX=/usr \
     -DBUILD_CONFIG=mysql_release \
+    -DCMAKE_BUILD_TYPE=RelWithDebInfo \
     -DCMAKE_C_FLAGS="-fPIC $CFLAGS -fno-strict-aliasing -DBIG_JOINS=1 -fomit-frame-pointer -fno-delete-null-pointer-checks -O3 " \
     -DCMAKE_CXX_FLAGS="-fPIC $CXXFLAGS -fno-strict-aliasing -DBIG_JOINS=1 -felide-constructors -fno-rtti -fno-delete-null-pointer-checks -O3 " \
     -DCMAKE_INSTALL_PREFIX=/usr \
