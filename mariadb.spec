@@ -9,6 +9,7 @@ Source3:        mysql-systemd-start
 Source4:        mariadb-install-db.service
 Patch0:         0002-Support-stateless-operation-by-migrating-to-usr-file.patch
 Patch1:         0003-Support-includeoptdir-for-non-fatal-inclusion-of-dir.patch
+Patch2:         cve-2017-3302.patch
 Summary:        MariaDB is a drop-in replacement for MySQL.
 Group:          Development/Tools
 License:        GPL-2.0
@@ -97,6 +98,7 @@ MariaDB is a community developed branch of MySQL.
 %setup -q
 %patch0 -p1
 %patch1 -p1
+%patch2 -p1
 
 %build
 mkdir clr-build
