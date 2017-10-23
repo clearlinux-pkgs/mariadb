@@ -1,6 +1,6 @@
 Name:           mariadb
 Version:        10.0.28
-Release:        47
+Release:        48
 URL:            http://mariadb.org
 Source0:        https://downloads.mariadb.org/f/mariadb-10.0.28/source/mariadb-10.0.28.tar.gz
 Source1:        mariadb.service
