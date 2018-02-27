@@ -1,15 +1,14 @@
 Name:           mariadb
-Version:        10.0.28
+Version:        10.1.31
 Release:        49
 URL:            http://mariadb.org
-Source0:        https://downloads.mariadb.org/f/mariadb-10.0.28/source/mariadb-10.0.28.tar.gz
+Source0:        https://downloads.mariadb.org/f/mariadb-10.1.31/source/mariadb-10.1.31.tar.gz
 Source1:        mariadb.service
 Source2:        mariadb.tmpfiles
 Source3:        mysql-systemd-start
 Source4:        mariadb-install-db.service
 Patch0:         0002-Support-stateless-operation-by-migrating-to-usr-file.patch
 Patch1:         0003-Support-includeoptdir-for-non-fatal-inclusion-of-dir.patch
-Patch2:         cve-2017-3302.patch
 Summary:        MariaDB is a drop-in replacement for MySQL.
 Group:          Development/Tools
 License:        GPL-2.0
@@ -98,7 +97,6 @@ MariaDB is a community developed branch of MySQL.
 %setup -q
 %patch0 -p1
 %patch1 -p1
-%patch2 -p1
 
 %build
 mkdir clr-build
@@ -167,23 +165,32 @@ install -m 0755 %{SOURCE3} %{buildroot}/usr/bin/mysql-systemd-start
 /usr/bin/mysqlimport
 /usr/bin/mysqlshow
 /usr/bin/mysqlslap
-%exclude /usr/bin/mytop
+/usr/bin/mysqld_safe_helper
+/usr/bin/mariabackup
+/usr/bin/mbstream
+/usr/bin/rcmysql
+/usr/bin/wsrep_sst_common
+/usr/bin/wsrep_sst_mariabackup
+/usr/bin/wsrep_sst_mysqldump
+/usr/bin/wsrep_sst_rsync
+/usr/bin/wsrep_sst_xtrabackup
+/usr/bin/wsrep_sst_xtrabackup-v2
 /usr/lib64/libmysqlclient.so.*
-%exclude /usr/share/mariadb/SELinux/RHEL4/mysql.fc
-%exclude /usr/share/mariadb/SELinux/RHEL4/mysql.te
-%exclude /usr/share/mariadb/binary-configure
 /usr/share/mariadb/charsets
 /usr/share/mariadb/*/errmsg.sys
 /usr/share/mariadb/errmsg-utf8.txt
-%exclude /usr/share/mariadb/magic
 /usr/share/mariadb/mysql-log-rotate
 %exclude /usr/share/mariadb/mysql.server
 %exclude /usr/share/mariadb/mysqld_multi.server
+%exclude /usr/share/mariadb/binary-configure
+%exclude /usr/share/mariadb/magic
+%exclude /usr/bin/mytop
 
 %files config
 /usr/share/defaults/mariadb/my.cnf
 /usr/share/defaults/mariadb/my.cnf.d/client.cnf
 /usr/share/defaults/mariadb/my.cnf.d/mysql-clients.cnf
+/usr/share/defaults/mariadb/my.cnf.d/enable_encryption.preset
 %exclude /usr/share/defaults/mariadb/init.d/mysql
 %exclude /usr/share/defaults/mariadb/logrotate.d/mysql
 
@@ -242,12 +249,31 @@ install -m 0755 %{SOURCE3} %{buildroot}/usr/bin/mysql-systemd-start
 /usr/share/mariadb/mysql_performance_tables.sql
 /usr/share/mariadb/mroonga/install.sql
 /usr/share/mariadb/mroonga/uninstall.sql
+/usr/share/mariadb/mroonga/AUTHORS
+/usr/share/mariadb/mroonga/COPYING
+/usr/share/mariadb/maria_add_gis_sp.sql
+/usr/share/mariadb/maria_add_gis_sp_bootstrap.sql
+/usr/share/mariadb/mysql_to_mariadb.sql
+/usr/share/mariadb/wsrep.cnf
+/usr/share/mariadb/wsrep_notify
 /usr/share/mariadb/my-*.cnf
 /usr/lib64/libmysqld.so.*
 /usr/lib64/mysql/plugin/daemon_example.ini
 /usr/lib64/mysql/plugin/*.so
+/usr/share/groonga-normalizer-mysql/README.md
+/usr/share/groonga-normalizer-mysql/lgpl-2.0.txt
+/usr/share/groonga/COPYING
+/usr/share/groonga/README.md
+%exclude /usr/share/mariadb/policy/apparmor/README
+%exclude /usr/share/mariadb/policy/apparmor/usr.sbin.mysqld
+%exclude /usr/share/mariadb/policy/apparmor/usr.sbin.mysqld.local
+%exclude /usr/share/mariadb/policy/selinux/README
+%exclude /usr/share/mariadb/policy/selinux/mariadb-server.fc
+%exclude /usr/share/mariadb/policy/selinux/mariadb-server.te
+%exclude /usr/share/mariadb/policy/selinux/mariadb.te
 
 %files dev
+/usr/share/aclocal/mysql/pkgconfig/mariadb.pc
 /usr/share/aclocal/mysql/aclocal/mysql.m4
 /usr/include/mysql/*.h
 /usr/include/mysql/private/atomic/*.h
