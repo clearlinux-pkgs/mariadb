@@ -168,13 +168,6 @@ install -m 0755 %{SOURCE3} %{buildroot}/usr/bin/mysql-systemd-start
 /usr/bin/mysqld_safe_helper
 /usr/bin/mariabackup
 /usr/bin/mbstream
-/usr/bin/rcmysql
-/usr/bin/wsrep_sst_common
-/usr/bin/wsrep_sst_mariabackup
-/usr/bin/wsrep_sst_mysqldump
-/usr/bin/wsrep_sst_rsync
-/usr/bin/wsrep_sst_xtrabackup
-/usr/bin/wsrep_sst_xtrabackup-v2
 /usr/lib64/libmysqlclient.so.*
 /usr/share/mariadb/charsets
 /usr/share/mariadb/*/errmsg.sys
@@ -185,6 +178,7 @@ install -m 0755 %{SOURCE3} %{buildroot}/usr/bin/mysql-systemd-start
 %exclude /usr/share/mariadb/binary-configure
 %exclude /usr/share/mariadb/magic
 %exclude /usr/bin/mytop
+%exclude /usr/bin/rcmysql
 
 %files config
 /usr/share/defaults/mariadb/my.cnf
@@ -239,6 +233,11 @@ install -m 0755 %{SOURCE3} %{buildroot}/usr/bin/mysql-systemd-start
 /usr/bin/resolveip
 /usr/bin/tokuft_logprint
 /usr/bin/tokuftdump
+/usr/bin/wsrep_sst_mariabackup
+/usr/bin/wsrep_sst_mysqldump
+/usr/bin/wsrep_sst_rsync
+/usr/bin/wsrep_sst_xtrabackup
+/usr/bin/wsrep_sst_xtrabackup-v2
 /usr/share/defaults/mariadb/my.cnf.d/server.cnf
 /usr/share/defaults/mariadb/my.cnf.d/tokudb.cnf
 /usr/share/mariadb/fill_help_tables.sql
@@ -271,6 +270,8 @@ install -m 0755 %{SOURCE3} %{buildroot}/usr/bin/mysql-systemd-start
 %exclude /usr/share/mariadb/policy/selinux/mariadb-server.fc
 %exclude /usr/share/mariadb/policy/selinux/mariadb-server.te
 %exclude /usr/share/mariadb/policy/selinux/mariadb.te
+# exclude until jira resolved https://jira.mariadb.org/browse/MDEV-14296
+%exclude /usr/bin/wsrep_sst_common
 
 %files dev
 /usr/share/aclocal/mysql/pkgconfig/mariadb.pc
