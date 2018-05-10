@@ -1,6 +1,6 @@
 Name:           mariadb
 Version:        10.1.31
-Release:        50
+Release:        51
 URL:            http://mariadb.org
 Source0:        https://downloads.mariadb.org/f/mariadb-10.1.31/source/mariadb-10.1.31.tar.gz
 Source1:        mariadb.service
