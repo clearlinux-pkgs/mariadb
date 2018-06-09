@@ -1,6 +1,6 @@
 Name:           mariadb
 Version:        10.1.31
-Release:        51
+Release:        52
 URL:            http://mariadb.org
 Source0:        https://downloads.mariadb.org/f/mariadb-10.1.31/source/mariadb-10.1.31.tar.gz
 Source1:        mariadb.service
@@ -154,10 +154,8 @@ install -m 0755 %{SOURCE3} %{buildroot}/usr/bin/mysql-systemd-start
 /usr/bin/msql2mysql
 /usr/bin/my_print_defaults
 /usr/bin/mysql
-/usr/bin/mysql_find_rows
 /usr/bin/mysql_plugin
 /usr/bin/mysql_waitpid
-/usr/bin/mysqlaccess
 /usr/bin/mysqladmin
 /usr/bin/mysqlbinlog
 /usr/bin/mysqlcheck
@@ -272,6 +270,8 @@ install -m 0755 %{SOURCE3} %{buildroot}/usr/bin/mysql-systemd-start
 %exclude /usr/share/mariadb/policy/selinux/mariadb.te
 # exclude until jira resolved https://jira.mariadb.org/browse/MDEV-14296
 %exclude /usr/bin/wsrep_sst_common
+/usr/bin/mysql_find_rows
+/usr/bin/mysqlaccess
 
 %files dev
 /usr/share/aclocal/mysql/pkgconfig/mariadb.pc
