@@ -6,3 +6,7 @@ kytea
 libedit
 libzmq
 valgrind
+arrow
+libgflags
+msgpack
+onigmo

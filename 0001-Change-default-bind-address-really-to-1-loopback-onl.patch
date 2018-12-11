@@ -1,0 +1,28 @@
+From 756ee4288c0aa336b192fad218f5786cd9b24d45 Mon Sep 17 00:00:00 2001
+From: Auke Kok <auke-jan.h.kok@intel.com>
+Date: Wed, 12 Dec 2018 14:29:25 -0800
+Subject: [PATCH] Change default bind address really to ::1 (loopback) only.
+
+Unlike the incorrect upstream documentation, this isn't the default,
+at all.
+---
+ sql/mysqld.cc | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/sql/mysqld.cc b/sql/mysqld.cc
+index 0de9d7a..3fbfd89 100644
+--- a/sql/mysqld.cc
++++ b/sql/mysqld.cc
+@@ -8635,7 +8635,8 @@ static int mysql_init_variables(void)
+   max_used_connections= slow_launch_threads = 0;
+   mysqld_user= mysqld_chroot= opt_init_file= opt_bin_logname = 0;
+   prepared_stmt_count= 0;
+-  mysqld_unix_port= opt_mysql_tmpdir= my_bind_addr_str= NullS;
++  mysqld_unix_port= opt_mysql_tmpdir= NullS;
++  my_bind_addr_str= (char*)"127.0.0.1";
+   bzero((uchar*) &mysql_tmpdir_list, sizeof(mysql_tmpdir_list));
+   /* Clear all except global_memory_used */
+   bzero((char*) &global_status_var, offsetof(STATUS_VAR,
+-- 
+2.20.0
+
