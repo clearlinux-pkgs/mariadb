@@ -4,7 +4,7 @@
 #
 Name     : mariadb
 Version  : 10.3.11
-Release  : 59
+Release  : 60
 URL      : https://downloads.mariadb.org/f/mariadb-10.3.11/source/mariadb-10.3.11.tar.gz
 Source0  : https://downloads.mariadb.org/f/mariadb-10.3.11/source/mariadb-10.3.11.tar.gz
 Source1  : mariadb-install-db.service
@@ -160,7 +160,7 @@ export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C
-export SOURCE_DATE_EPOCH=1544664046
+export SOURCE_DATE_EPOCH=1549997871
 mkdir -p clr-build
 pushd clr-build
 %cmake .. -DBUILD_CONFIG=mysql_release \
@@ -206,7 +206,7 @@ export no_proxy=localhost,127.0.0.1,0.0.0.0
 cd clr-build/mysql-test && ./mtr --suite=unit --parallel=8 --mem
 
 %install
-export SOURCE_DATE_EPOCH=1544664046
+export SOURCE_DATE_EPOCH=1549997871
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/package-licenses/mariadb
 cp COPYING %{buildroot}/usr/share/package-licenses/mariadb/COPYING
@@ -249,6 +249,9 @@ mkdir -p %{buildroot}/usr/lib/tmpfiles.d
 install -m 0644 %{SOURCE3} %{buildroot}/usr/lib/tmpfiles.d/mariadb.conf
 ## install_append content
 rm -rf %{buildroot}/usr/share/mysql-test
+mkdir -p %{buildroot}/usr/share/mariadb/
+mv %{buildroot}/usr/bin/wsrep_sst_common %{buildroot}/usr/share/mariadb
+ln -s ../share/mariadb/wsrep_sst_common %{buildroot}/usr/bin/wsrep_sst_common
 ## install_append end
 
 %files
@@ -411,6 +414,7 @@ rm -rf %{buildroot}/usr/share/mysql-test
 /usr/share/mariadb/ukrainian/errmsg.sys
 /usr/share/mariadb/wsrep.cnf
 /usr/share/mariadb/wsrep_notify
+/usr/share/mariadb/wsrep_sst_common
 
 %files dev
 %defattr(-,root,root,-)

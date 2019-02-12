@@ -1,1 +1,4 @@
 rm -rf %{buildroot}/usr/share/mysql-test
+mkdir -p %{buildroot}/usr/share/mariadb/
+mv %{buildroot}/usr/bin/wsrep_sst_common %{buildroot}/usr/share/mariadb
+ln -s ../share/mariadb/wsrep_sst_common %{buildroot}/usr/bin/wsrep_sst_common
