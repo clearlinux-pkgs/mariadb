@@ -5,26 +5,6 @@ libmariadb.so.3:ma_pvio_register_callback
 libmariadb.so.3:mariadb_cancel
 libmariadb.so.3:mariadb_connection
 libmariadb.so.3:mariadb_convert_string
-libmariadb.so.3:mariadb_dyncol_check
-libmariadb.so.3:mariadb_dyncol_column_cmp_named
-libmariadb.so.3:mariadb_dyncol_column_count
-libmariadb.so.3:mariadb_dyncol_create_many_named
-libmariadb.so.3:mariadb_dyncol_create_many_num
-libmariadb.so.3:mariadb_dyncol_exists_named
-libmariadb.so.3:mariadb_dyncol_exists_num
-libmariadb.so.3:mariadb_dyncol_free
-libmariadb.so.3:mariadb_dyncol_get_named
-libmariadb.so.3:mariadb_dyncol_get_num
-libmariadb.so.3:mariadb_dyncol_has_names
-libmariadb.so.3:mariadb_dyncol_json
-libmariadb.so.3:mariadb_dyncol_list_named
-libmariadb.so.3:mariadb_dyncol_list_num
-libmariadb.so.3:mariadb_dyncol_unpack
-libmariadb.so.3:mariadb_dyncol_update_many_named
-libmariadb.so.3:mariadb_dyncol_update_many_num
-libmariadb.so.3:mariadb_dyncol_val_double
-libmariadb.so.3:mariadb_dyncol_val_long
-libmariadb.so.3:mariadb_dyncol_val_str
 libmariadb.so.3:mariadb_get_charset_by_name
 libmariadb.so.3:mariadb_get_charset_by_nr
 libmariadb.so.3:mariadb_get_info
@@ -313,6 +293,7 @@ libmariadbd.so.19:_Z11ull_get_keyPKhPmc
 libmariadbd.so.19:_Z11unhex_type2P10st_typelib
 libmariadbd.so.19:_Z11unireg_initm
 libmariadbd.so.19:_Z11unpack_timexP13st_mysql_time25enum_mysql_timestamp_type
+libmariadbd.so.19:_Z11update_hashP14user_var_entrybPvm11Item_resultPK15charset_info_stb
 libmariadbd.so.19:_Z11view_repairP3THDP10TABLE_LISTP15st_ha_check_opt
 libmariadbd.so.19:_Z12alter_serverP3THDP21st_lex_server_options
 libmariadbd.so.19:_Z12calc_weekdaylb
@@ -417,6 +398,7 @@ libmariadbd.so.19:_Z14ha_lock_engineP3THDPK10handlerton
 libmariadbd.so.19:_Z14ha_show_statusP3THDP10handlerton12ha_stat_type
 libmariadbd.so.19:_Z14init_sql_allocP11st_mem_rootPKcjjm
 libmariadbd.so.19:_Z14ip_to_hostnameP16sockaddr_storagePKcPS2_Pj
+libmariadbd.so.19:_Z14is_eits_usableP5Field
 libmariadbd.so.19:_Z14is_locked_viewP3THDP10TABLE_LIST
 libmariadbd.so.19:_Z14join_read_key2P3THDP13st_join_tableP5TABLEP12st_table_ref
 libmariadbd.so.19:_Z14lex_end_stage1P3LEX
@@ -514,7 +496,7 @@ libmariadbd.so.19:_Z15my_decimal_trimPyPj
 libmariadbd.so.19:_Z15my_double_rounddxbb
 libmariadbd.so.19:_Z15my_time_comparePK13st_mysql_timeS1_
 libmariadbd.so.19:_Z15mysql_change_dbP3THDPK25st_mysql_const_lex_stringb
-libmariadbd.so.19:_Z15mysql_create_dbP3THDPK25st_mysql_const_lex_stringRK14DDL_options_stPK23Schema_specification_st
+libmariadbd.so.19:_Z15mysql_create_dbP3THDPK25st_mysql_const_lex_string14DDL_options_stPK23Schema_specification_st
 libmariadbd.so.19:_Z15mysql_drop_viewP3THDP10TABLE_LIST14enum_drop_mode
 libmariadbd.so.19:_Z15mysql_make_viewP3THDP11TABLE_SHAREP10TABLE_LISTb
 libmariadbd.so.19:_Z15mysql_write_frmP18st_lock_param_typej
@@ -1188,7 +1170,7 @@ libmariadbd.so.19:_Z25ha_default_tmp_handlertonP3THD
 libmariadbd.so.19:_Z25ha_resolve_by_legacy_typeP3THD14legacy_db_type
 libmariadbd.so.19:_Z25has_proxy_protocol_headerP6st_net
 libmariadbd.so.19:_Z25init_net_server_extensionP3THD
-libmariadbd.so.19:_Z25int_to_datetime_with_warnbyP13st_mysql_timeyPKc
+libmariadbd.so.19:_Z25int_to_datetime_with_warnbyP13st_mysql_timeyPK11TABLE_SHAREPKc
 libmariadbd.so.19:_Z25is_proxy_protocol_allowedPK8sockaddr
 libmariadbd.so.19:_Z25make_cond_for_info_schemaP3THDP4ItemP10TABLE_LIST
 libmariadbd.so.19:_Z25make_in_exists_conversionP3THDP4JOINP17Item_in_subselect
@@ -1283,7 +1265,7 @@ libmariadbd.so.19:_Z28check_duplicates_in_intervalPKcS0_P10st_typelibPK15charset
 libmariadbd.so.19:_Z28check_fk_parent_table_accessP3THDP14HA_CREATE_INFOP10Alter_infoPKc
 libmariadbd.so.19:_Z28collect_statistics_for_tableP3THDP5TABLE
 libmariadbd.so.19:_Z28delete_statistics_for_columnP3THDP5TABLEP5Field
-libmariadbd.so.19:_Z28double_to_datetime_with_warndP13st_mysql_timeyPKc
+libmariadbd.so.19:_Z28double_to_datetime_with_warndP13st_mysql_timeyPK11TABLE_SHAREPKc
 libmariadbd.so.19:_Z28dynamic_column_error_message23enum_dyncol_func_result
 libmariadbd.so.19:_Z28event_that_should_be_ignoredPKc
 libmariadbd.so.19:_Z28fill_schema_applicable_rolesP3THDP10TABLE_LISTP4Item
@@ -1298,7 +1280,7 @@ libmariadbd.so.19:_Z28init_proxy_protocol_networksPKc
 libmariadbd.so.19:_Z28initialize_encryption_pluginP13st_plugin_int
 libmariadbd.so.19:_Z28is_native_function_with_warnP3THDPK25st_mysql_const_lex_string
 libmariadbd.so.19:_Z28join_read_always_key_or_nullP13st_join_table
-libmariadbd.so.19:_Z28make_truncated_value_warningP3THDN21Sql_state_errno_level18enum_warning_levelEPK7ErrConv25enum_mysql_timestamp_typePKc
+libmariadbd.so.19:_Z28make_truncated_value_warningP3THDN21Sql_state_errno_level18enum_warning_levelEPK7ErrConv25enum_mysql_timestamp_typePK11TABLE_SHAREPKc
 libmariadbd.so.19:_Z28my_datetime_packed_to_binaryxPhj
 libmariadbd.so.19:_Z28mysql_create_or_drop_triggerP3THDP10TABLE_LISTb
 libmariadbd.so.19:_Z28mysql_ha_rm_temporary_tablesP3THD
@@ -1313,7 +1295,7 @@ libmariadbd.so.19:_Z28sp_update_stmt_used_routinesP3THDP17Query_tables_listP10SQ
 libmariadbd.so.19:_Z28sp_update_stmt_used_routinesP3THDP17Query_tables_listP7st_hashP10TABLE_LIST
 libmariadbd.so.19:_Z28stmt_has_updated_trans_tablePK3THD
 libmariadbd.so.19:_Z29cleanup_empty_jtbm_semi_joinsP4JOINP4ListI10TABLE_LISTE
-libmariadbd.so.19:_Z29decimal_to_datetime_with_warnPK10my_decimalP13st_mysql_timeyPKc
+libmariadbd.so.19:_Z29decimal_to_datetime_with_warnPK10my_decimalP13st_mysql_timeyPK11TABLE_SHAREPKc
 libmariadbd.so.19:_Z29engine_table_options_frm_readPKhmP11TABLE_SHARE
 libmariadbd.so.19:_Z29fill_schema_column_privilegesP3THDP10TABLE_LISTP4Item
 libmariadbd.so.19:_Z29fill_schema_schema_privilegesP3THDP10TABLE_LISTP4Item
@@ -6200,6 +6182,7 @@ libmariadbd.so.19:_ZN4Item18save_date_in_fieldEP5Fieldb
 libmariadbd.so.19:_ZN4Item18save_real_in_fieldEP5Fieldb
 libmariadbd.so.19:_ZN4Item18save_time_in_fieldEP5Fieldb
 libmariadbd.so.19:_ZN4Item18val_real_from_dateEv
+libmariadbd.so.19:_ZN4Item19field_table_or_nullEv
 libmariadbd.so.19:_ZN4Item19find_item_processorEPv
 libmariadbd.so.19:_ZN4Item19locale_from_val_strEv
 libmariadbd.so.19:_ZN4Item19print_parenthesisedEP6String15enum_query_type10precedence
@@ -7298,6 +7281,7 @@ libmariadbd.so.19:_ZNK14Item_subselect10const_itemEv
 libmariadbd.so.19:_ZNK14Item_subselect11used_tablesEv
 libmariadbd.so.19:_ZNK14Item_subselect4typeEv
 libmariadbd.so.19:_ZNK14Wait_for_flush19get_deadlock_weightEv
+libmariadbd.so.19:_ZNK14partition_info23field_in_partition_exprEP5Field
 libmariadbd.so.19:_ZNK14partition_info24error_if_requires_valuesEv
 libmariadbd.so.19:_ZNK14select_dumpvar19check_simple_selectEv
 libmariadbd.so.19:_ZNK14user_var_entry7val_intEPb
@@ -8428,6 +8412,7 @@ libmariadbd.so.19:my_az_allocator
 libmariadbd.so.19:my_az_free
 libmariadbd.so.19:my_b_append
 libmariadbd.so.19:my_b_append_tell
+libmariadbd.so.19:my_b_copy_all_to_file
 libmariadbd.so.19:my_b_copy_to_file
 libmariadbd.so.19:my_b_filelength
 libmariadbd.so.19:my_b_flush_io_cache
@@ -8640,6 +8625,7 @@ libmariadbd.so.19:my_redel
 libmariadbd.so.19:my_register_filename
 libmariadbd.so.19:my_rename
 libmariadbd.so.19:my_rename_with_symlink
+libmariadbd.so.19:my_rmtree
 libmariadbd.so.19:my_rnd
 libmariadbd.so.19:my_rnd_init
 libmariadbd.so.19:my_rnd_ssl
