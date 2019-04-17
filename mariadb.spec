@@ -6,7 +6,7 @@
 #
 Name     : mariadb
 Version  : 10.3.13
-Release  : 61
+Release  : 62
 URL      : https://downloads.mariadb.com/MariaDB/mariadb-10.3.13/source/mariadb-10.3.13.tar.gz
 Source0  : https://downloads.mariadb.com/MariaDB/mariadb-10.3.13/source/mariadb-10.3.13.tar.gz
 Source1  : mariadb-install-db.service
