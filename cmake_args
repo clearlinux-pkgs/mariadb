@@ -24,7 +24,7 @@
 -DMYSQL_UNIX_ADDR=/run/mariadb/mariadb.sock
 -DTMPDIR=/var/tmp
 -DWITH_EMBEDDED_SERVER=ON
--DWITH_JEMALLOC=yes
+-DWITH_JEMALLOC=no
 -DWITH_MYSQLD_LDFLAGS="-pie -Wl,-z,now"
 -DWITH_SSL=system
 -DWITH_ZLIB=system

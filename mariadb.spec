@@ -6,14 +6,14 @@
 #
 Name     : mariadb
 Version  : 10.3.13
-Release  : 62
+Release  : 63
 URL      : https://downloads.mariadb.com/MariaDB/mariadb-10.3.13/source/mariadb-10.3.13.tar.gz
 Source0  : https://downloads.mariadb.com/MariaDB/mariadb-10.3.13/source/mariadb-10.3.13.tar.gz
 Source1  : mariadb-install-db.service
 Source2  : mariadb.service
 Source3  : mariadb.tmpfiles
 Source99 : https://downloads.mariadb.com/MariaDB/mariadb-10.3.13/source/mariadb-10.3.13.tar.gz.asc
-Summary  : MariaDB Connector/C dynamic library
+Summary  : Fast SQL database server, derived from MySQL
 Group    : Development/Tools
 License  : AGPL-3.0 Apache-2.0 BSD-3-Clause BSD-3-Clause-Clear CC-BY-4.0 GPL-2.0 GPL-3.0 LGPL-2.1 OpenSSL
 Requires: mariadb-bin = %{version}-%{release}
@@ -50,15 +50,12 @@ Patch2: 0002-Support-stateless-operation-by-migrating-to-usr-file.patch
 Patch3: 0003-Support-includeoptdir-for-non-fatal-inclusion-of-dir.patch
 
 %description
-Introduction
-============
-This is the Gnu Readline library, version 5.2.
-The Readline library provides a set of functions for use by applications
-that allow users to edit command lines as they are typed in.  Both
-Emacs and vi editing modes are available.  The Readline library includes
-additional functions to maintain a list of previously-entered command
-lines, to recall and perhaps reedit those lines, and perform csh-like
-history expansion on previous commands.
+ZLIB DATA COMPRESSION LIBRARY
+zlib 1.2.11 is a general purpose data compression library.  All the code is
+thread safe.  The data format used by the zlib library is described by RFCs
+(Request for Comments) 1950 to 1952 in the files
+http://tools.ietf.org/html/rfc1950 (zlib format), rfc1951 (deflate format) and
+rfc1952 (gzip format).
 
 %package bin
 Summary: bin components for the mariadb package.
@@ -66,7 +63,6 @@ Group: Binaries
 Requires: mariadb-data = %{version}-%{release}
 Requires: mariadb-config = %{version}-%{release}
 Requires: mariadb-license = %{version}-%{release}
-Requires: mariadb-man = %{version}-%{release}
 Requires: mariadb-services = %{version}-%{release}
 
 %description bin
@@ -96,6 +92,7 @@ Requires: mariadb-lib = %{version}-%{release}
 Requires: mariadb-bin = %{version}-%{release}
 Requires: mariadb-data = %{version}-%{release}
 Provides: mariadb-devel = %{version}-%{release}
+Requires: mariadb = %{version}-%{release}
 
 %description dev
 dev components for the mariadb package.
@@ -163,10 +160,13 @@ export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C
-export SOURCE_DATE_EPOCH=1552586886
+export SOURCE_DATE_EPOCH=1556836905
 mkdir -p clr-build
 pushd clr-build
-export LDFLAGS="${LDFLAGS} -fno-lto"
+export CFLAGS="$CFLAGS -O3 -falign-functions=32 -fno-math-errno -fno-semantic-interposition -fno-trapping-math "
+export FCFLAGS="$CFLAGS -O3 -falign-functions=32 -fno-math-errno -fno-semantic-interposition -fno-trapping-math "
+export FFLAGS="$CFLAGS -O3 -falign-functions=32 -fno-math-errno -fno-semantic-interposition -fno-trapping-math "
+export CXXFLAGS="$CXXFLAGS -O3 -falign-functions=32 -fno-math-errno -fno-semantic-interposition -fno-trapping-math "
 %cmake .. -DBUILD_CONFIG=mysql_release \
 -DCMAKE_BUILD_TYPE=RelWithDebInfo \
 -DCMAKE_C_FLAGS="-fPIC $CFLAGS -fno-strict-aliasing -DBIG_JOINS=1 -fomit-frame-pointer -fno-delete-null-pointer-checks" \
@@ -199,7 +199,7 @@ export LDFLAGS="${LDFLAGS} -fno-lto"
 -DWITH_ZLIB=system \
 -DWITHOUT_MROONGA=True \
 -DWITHOUT_TOKUDB=True
-make  %{?_smp_mflags} VERBOSE=1
+make  %{?_smp_mflags}
 popd
 
 %check
@@ -210,7 +210,7 @@ export no_proxy=localhost,127.0.0.1,0.0.0.0
 cd clr-build/mysql-test && ./mtr --suite=unit --parallel=8 --mem
 
 %install
-export SOURCE_DATE_EPOCH=1552586886
+export SOURCE_DATE_EPOCH=1556836905
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/package-licenses/mariadb
 cp COPYING %{buildroot}/usr/share/package-licenses/mariadb/COPYING
@@ -236,6 +236,7 @@ cp storage/rocksdb/rocksdb/LICENSE.Apache %{buildroot}/usr/share/package-license
 cp storage/rocksdb/rocksdb/LICENSE.leveldb %{buildroot}/usr/share/package-licenses/mariadb/storage_rocksdb_rocksdb_LICENSE.leveldb
 cp storage/rocksdb/rocksdb/docs/LICENSE-DOCUMENTATION %{buildroot}/usr/share/package-licenses/mariadb/storage_rocksdb_rocksdb_docs_LICENSE-DOCUMENTATION
 cp storage/tokudb/PerconaFT/COPYING.AGPLv3 %{buildroot}/usr/share/package-licenses/mariadb/storage_tokudb_PerconaFT_COPYING.AGPLv3
+cp storage/tokudb/PerconaFT/COPYING.APACHEv2 %{buildroot}/usr/share/package-licenses/mariadb/storage_tokudb_PerconaFT_COPYING.APACHEv2
 cp storage/tokudb/PerconaFT/COPYING.GPLv2 %{buildroot}/usr/share/package-licenses/mariadb/storage_tokudb_PerconaFT_COPYING.GPLv2
 cp storage/tokudb/PerconaFT/third_party/snappy-1.1.2/COPYING %{buildroot}/usr/share/package-licenses/mariadb/storage_tokudb_PerconaFT_third_party_snappy-1.1.2_COPYING
 cp storage/tokudb/PerconaFT/third_party/xz-4.999.9beta/COPYING %{buildroot}/usr/share/package-licenses/mariadb/storage_tokudb_PerconaFT_third_party_xz-4.999.9beta_COPYING
@@ -886,6 +887,7 @@ ln -s ../share/mariadb/wsrep_sst_common %{buildroot}/usr/bin/wsrep_sst_common
 /usr/share/package-licenses/mariadb/storage_rocksdb_rocksdb_LICENSE.leveldb
 /usr/share/package-licenses/mariadb/storage_rocksdb_rocksdb_docs_LICENSE-DOCUMENTATION
 /usr/share/package-licenses/mariadb/storage_tokudb_PerconaFT_COPYING.AGPLv3
+/usr/share/package-licenses/mariadb/storage_tokudb_PerconaFT_COPYING.APACHEv2
 /usr/share/package-licenses/mariadb/storage_tokudb_PerconaFT_COPYING.GPLv2
 /usr/share/package-licenses/mariadb/storage_tokudb_PerconaFT_third_party_snappy-1.1.2_COPYING
 /usr/share/package-licenses/mariadb/storage_tokudb_PerconaFT_third_party_xz-4.999.9beta_COPYING
