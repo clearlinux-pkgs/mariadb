@@ -6,7 +6,7 @@
 #
 Name     : mariadb
 Version  : 10.3.13
-Release  : 63
+Release  : 64
 URL      : https://downloads.mariadb.com/MariaDB/mariadb-10.3.13/source/mariadb-10.3.13.tar.gz
 Source0  : https://downloads.mariadb.com/MariaDB/mariadb-10.3.13/source/mariadb-10.3.13.tar.gz
 Source1  : mariadb-install-db.service
@@ -154,19 +154,22 @@ services components for the mariadb package.
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
+pushd ..
+cp -a mariadb-10.3.13 buildavx2
+popd
 
 %build
 export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C
-export SOURCE_DATE_EPOCH=1556836905
+export SOURCE_DATE_EPOCH=1557031515
 mkdir -p clr-build
 pushd clr-build
-export CFLAGS="$CFLAGS -O3 -falign-functions=32 -fno-math-errno -fno-semantic-interposition -fno-trapping-math "
-export FCFLAGS="$CFLAGS -O3 -falign-functions=32 -fno-math-errno -fno-semantic-interposition -fno-trapping-math "
-export FFLAGS="$CFLAGS -O3 -falign-functions=32 -fno-math-errno -fno-semantic-interposition -fno-trapping-math "
-export CXXFLAGS="$CXXFLAGS -O3 -falign-functions=32 -fno-math-errno -fno-semantic-interposition -fno-trapping-math "
+export CFLAGS="$CFLAGS -O3 -falign-functions=32 -fno-lto -fno-math-errno -fno-semantic-interposition -fno-trapping-math "
+export FCFLAGS="$CFLAGS -O3 -falign-functions=32 -fno-lto -fno-math-errno -fno-semantic-interposition -fno-trapping-math "
+export FFLAGS="$CFLAGS -O3 -falign-functions=32 -fno-lto -fno-math-errno -fno-semantic-interposition -fno-trapping-math "
+export CXXFLAGS="$CXXFLAGS -O3 -falign-functions=32 -fno-lto -fno-math-errno -fno-semantic-interposition -fno-trapping-math "
 %cmake .. -DBUILD_CONFIG=mysql_release \
 -DCMAKE_BUILD_TYPE=RelWithDebInfo \
 -DCMAKE_C_FLAGS="-fPIC $CFLAGS -fno-strict-aliasing -DBIG_JOINS=1 -fomit-frame-pointer -fno-delete-null-pointer-checks" \
@@ -193,7 +196,49 @@ export CXXFLAGS="$CXXFLAGS -O3 -falign-functions=32 -fno-math-errno -fno-semanti
 -DMYSQL_UNIX_ADDR=/run/mariadb/mariadb.sock \
 -DTMPDIR=/var/tmp \
 -DWITH_EMBEDDED_SERVER=ON \
--DWITH_JEMALLOC=yes \
+-DWITH_JEMALLOC=no \
+-DWITH_MYSQLD_LDFLAGS="-pie -Wl,-z,now" \
+-DWITH_SSL=system \
+-DWITH_ZLIB=system \
+-DWITHOUT_MROONGA=True \
+-DWITHOUT_TOKUDB=True
+make  %{?_smp_mflags}
+popd
+mkdir -p clr-build-avx2
+pushd clr-build-avx2
+export CFLAGS="$CFLAGS -O3 -falign-functions=32 -fno-lto -fno-math-errno -fno-semantic-interposition -fno-trapping-math -march=haswell "
+export FCFLAGS="$CFLAGS -O3 -falign-functions=32 -fno-lto -fno-math-errno -fno-semantic-interposition -fno-trapping-math -march=haswell "
+export FFLAGS="$CFLAGS -O3 -falign-functions=32 -fno-lto -fno-math-errno -fno-semantic-interposition -fno-trapping-math -march=haswell "
+export CXXFLAGS="$CXXFLAGS -O3 -falign-functions=32 -fno-lto -fno-math-errno -fno-semantic-interposition -fno-trapping-math -march=haswell "
+export CFLAGS="$CFLAGS -march=haswell -m64"
+export CXXFLAGS="$CXXFLAGS -march=haswell -m64"
+%cmake .. -DBUILD_CONFIG=mysql_release \
+-DCMAKE_BUILD_TYPE=RelWithDebInfo \
+-DCMAKE_C_FLAGS="-fPIC $CFLAGS -fno-strict-aliasing -DBIG_JOINS=1 -fomit-frame-pointer -fno-delete-null-pointer-checks" \
+-DCMAKE_CXX_FLAGS="-fPIC $CXXFLAGS -fno-strict-aliasing -DBIG_JOINS=1 -felide-constructors -fno-rtti -fno-delete-null-pointer-checks" \
+-DCMAKE_INSTALL_PREFIX=/usr \
+-DENABLED_LOCAL_INFILE=ON \
+-DINSTALL_DOCDIR="share/doc/mariadb" \
+-DINSTALL_DOCREADMEDIR="share/doc/mariadb" \
+-DINSTALL_INCLUDEDIR=include/mysql \
+-DINSTALL_INFODIR=share/info \
+-DINSTALL_LAYOUT=RPM \
+-DINSTALL_LIBDIR="lib64" \
+-DINSTALL_MANDIR=share/man \
+-DINSTALL_MYSQLSHAREDIR=share/mariadb \
+-DINSTALL_MYSQLTESTDIR=share/mysql-test \
+-DINSTALL_PLUGINDIR="lib64/mysql/plugin" \
+-DINSTALL_SBINDIR=sbin \
+-DINSTALL_SCRIPTDIR=bin \
+-DINSTALL_SHAREDIR=share/aclocal/mysql \
+-DINSTALL_SUPPORTFILESDIR=share/mariadb \
+-DINSTALL_SYSCONF2DIR="/usr/share/defaults/mariadb/my.cnf.d" \
+-DINSTALL_SYSCONFDIR="/usr/share/defaults/mariadb" \
+-DMYSQL_DATADIR="/var/lib/mysql" \
+-DMYSQL_UNIX_ADDR=/run/mariadb/mariadb.sock \
+-DTMPDIR=/var/tmp \
+-DWITH_EMBEDDED_SERVER=ON \
+-DWITH_JEMALLOC=no \
 -DWITH_MYSQLD_LDFLAGS="-pie -Wl,-z,now" \
 -DWITH_SSL=system \
 -DWITH_ZLIB=system \
@@ -210,7 +255,7 @@ export no_proxy=localhost,127.0.0.1,0.0.0.0
 cd clr-build/mysql-test && ./mtr --suite=unit --parallel=8 --mem
 
 %install
-export SOURCE_DATE_EPOCH=1556836905
+export SOURCE_DATE_EPOCH=1557031515
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/package-licenses/mariadb
 cp COPYING %{buildroot}/usr/share/package-licenses/mariadb/COPYING
@@ -244,6 +289,9 @@ cp storage/tokudb/PerconaFT/third_party/xz-4.999.9beta/COPYING.GPLv2 %{buildroot
 cp storage/tokudb/PerconaFT/third_party/xz-4.999.9beta/COPYING.GPLv3 %{buildroot}/usr/share/package-licenses/mariadb/storage_tokudb_PerconaFT_third_party_xz-4.999.9beta_COPYING.GPLv3
 cp storage/tokudb/PerconaFT/third_party/xz-4.999.9beta/COPYING.LGPLv2.1 %{buildroot}/usr/share/package-licenses/mariadb/storage_tokudb_PerconaFT_third_party_xz-4.999.9beta_COPYING.LGPLv2.1
 cp vio/docs/COPYING.openssl %{buildroot}/usr/share/package-licenses/mariadb/vio_docs_COPYING.openssl
+pushd clr-build-avx2
+%make_install_avx2  || :
+popd
 pushd clr-build
 %make_install
 popd
@@ -273,6 +321,46 @@ ln -s ../share/mariadb/wsrep_sst_common %{buildroot}/usr/bin/wsrep_sst_common
 /usr/bin/aria_ftdump
 /usr/bin/aria_pack
 /usr/bin/aria_read_log
+/usr/bin/haswell/aria_chk
+/usr/bin/haswell/aria_dump_log
+/usr/bin/haswell/aria_ftdump
+/usr/bin/haswell/aria_pack
+/usr/bin/haswell/aria_read_log
+/usr/bin/haswell/innochecksum
+/usr/bin/haswell/mariabackup
+/usr/bin/haswell/mariadb_config
+/usr/bin/haswell/mbstream
+/usr/bin/haswell/my_print_defaults
+/usr/bin/haswell/myisam_ftdump
+/usr/bin/haswell/myisamchk
+/usr/bin/haswell/myisamlog
+/usr/bin/haswell/myisampack
+/usr/bin/haswell/mysql
+/usr/bin/haswell/mysql_client_test
+/usr/bin/haswell/mysql_client_test_embedded
+/usr/bin/haswell/mysql_embedded
+/usr/bin/haswell/mysql_ldb
+/usr/bin/haswell/mysql_plugin
+/usr/bin/haswell/mysql_tzinfo_to_sql
+/usr/bin/haswell/mysql_upgrade
+/usr/bin/haswell/mysql_waitpid
+/usr/bin/haswell/mysqladmin
+/usr/bin/haswell/mysqlbinlog
+/usr/bin/haswell/mysqlcheck
+/usr/bin/haswell/mysqld
+/usr/bin/haswell/mysqld_safe_helper
+/usr/bin/haswell/mysqldump
+/usr/bin/haswell/mysqlimport
+/usr/bin/haswell/mysqlshow
+/usr/bin/haswell/mysqlslap
+/usr/bin/haswell/mysqltest
+/usr/bin/haswell/mysqltest_embedded
+/usr/bin/haswell/perror
+/usr/bin/haswell/replace
+/usr/bin/haswell/resolve_stack_dump
+/usr/bin/haswell/resolveip
+/usr/bin/haswell/sst_dump
+/usr/bin/haswell/test-connect-t
 /usr/bin/innochecksum
 /usr/bin/mariabackup
 /usr/bin/mariadb_config
@@ -799,6 +887,11 @@ ln -s ../share/mariadb/wsrep_sst_common %{buildroot}/usr/bin/wsrep_sst_common
 /usr/include/mysql/server/sslopt-longopts.h
 /usr/include/mysql/server/sslopt-vars.h
 /usr/include/mysql/server/typelib.h
+/usr/lib64/haswell/libmariadb.so
+/usr/lib64/haswell/libmariadbd.so
+/usr/lib64/haswell/libmysqlclient.so
+/usr/lib64/haswell/libmysqlclient_r.so
+/usr/lib64/haswell/libmysqld.so
 /usr/lib64/libmariadb.so
 /usr/lib64/libmariadbd.so
 /usr/lib64/libmysqlclient.so
@@ -818,32 +911,44 @@ ln -s ../share/mariadb/wsrep_sst_common %{buildroot}/usr/bin/wsrep_sst_common
 
 %files lib
 %defattr(-,root,root,-)
+/usr/lib64/haswell/libmariadb.so.3
+/usr/lib64/haswell/libmariadbd.so.19
 /usr/lib64/libmariadb.so.3
 /usr/lib64/libmariadbd.so.19
 /usr/lib64/mysql/plugin/adt_null.so
 /usr/lib64/mysql/plugin/auth_0x0100.so
 /usr/lib64/mysql/plugin/auth_ed25519.so
+/usr/lib64/mysql/plugin/auth_ed25519.so.avx2
 /usr/lib64/mysql/plugin/auth_pam.so
 /usr/lib64/mysql/plugin/auth_socket.so
 /usr/lib64/mysql/plugin/auth_test_plugin.so
 /usr/lib64/mysql/plugin/caching_sha2_password.so
 /usr/lib64/mysql/plugin/client_ed25519.so
+/usr/lib64/mysql/plugin/client_ed25519.so.avx2
 /usr/lib64/mysql/plugin/debug_key_management.so
 /usr/lib64/mysql/plugin/dialog.so
 /usr/lib64/mysql/plugin/dialog_examples.so
 /usr/lib64/mysql/plugin/disks.so
 /usr/lib64/mysql/plugin/example_key_management.so
+/usr/lib64/mysql/plugin/example_key_management.so.avx2
 /usr/lib64/mysql/plugin/file_key_management.so
 /usr/lib64/mysql/plugin/ha_archive.so
+/usr/lib64/mysql/plugin/ha_archive.so.avx2
 /usr/lib64/mysql/plugin/ha_blackhole.so
+/usr/lib64/mysql/plugin/ha_blackhole.so.avx2
 /usr/lib64/mysql/plugin/ha_connect.so
+/usr/lib64/mysql/plugin/ha_connect.so.avx2
 /usr/lib64/mysql/plugin/ha_example.so
 /usr/lib64/mysql/plugin/ha_federated.so
 /usr/lib64/mysql/plugin/ha_federatedx.so
 /usr/lib64/mysql/plugin/ha_rocksdb.so
+/usr/lib64/mysql/plugin/ha_rocksdb.so.avx2
 /usr/lib64/mysql/plugin/ha_sphinx.so
+/usr/lib64/mysql/plugin/ha_sphinx.so.avx2
 /usr/lib64/mysql/plugin/ha_spider.so
+/usr/lib64/mysql/plugin/ha_spider.so.avx2
 /usr/lib64/mysql/plugin/ha_test_sql_discovery.so
+/usr/lib64/mysql/plugin/ha_test_sql_discovery.so.avx2
 /usr/lib64/mysql/plugin/handlersocket.so
 /usr/lib64/mysql/plugin/libdaemon_example.so
 /usr/lib64/mysql/plugin/locales.so
