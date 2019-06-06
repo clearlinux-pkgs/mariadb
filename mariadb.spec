@@ -6,7 +6,7 @@
 #
 Name     : mariadb
 Version  : 10.3.13
-Release  : 64
+Release  : 65
 URL      : https://downloads.mariadb.com/MariaDB/mariadb-10.3.13/source/mariadb-10.3.13.tar.gz
 Source0  : https://downloads.mariadb.com/MariaDB/mariadb-10.3.13/source/mariadb-10.3.13.tar.gz
 Source1  : mariadb-install-db.service
@@ -29,6 +29,7 @@ BuildRequires : bison-dev
 BuildRequires : boost-dev
 BuildRequires : buildreq-cmake
 BuildRequires : buildreq-distutils3
+BuildRequires : buildreq-php
 BuildRequires : curl-dev
 BuildRequires : git
 BuildRequires : glibc-dev
@@ -93,6 +94,7 @@ Requires: mariadb-bin = %{version}-%{release}
 Requires: mariadb-data = %{version}-%{release}
 Provides: mariadb-devel = %{version}-%{release}
 Requires: mariadb = %{version}-%{release}
+Requires: mariadb = %{version}-%{release}
 
 %description dev
 dev components for the mariadb package.
@@ -154,16 +156,13 @@ services components for the mariadb package.
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
-pushd ..
-cp -a mariadb-10.3.13 buildavx2
-popd
 
 %build
 export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C
-export SOURCE_DATE_EPOCH=1557031515
+export SOURCE_DATE_EPOCH=1559829709
 mkdir -p clr-build
 pushd clr-build
 export CFLAGS="$CFLAGS -O3 -falign-functions=32 -fno-lto -fno-math-errno -fno-semantic-interposition -fno-trapping-math "
@@ -255,7 +254,7 @@ export no_proxy=localhost,127.0.0.1,0.0.0.0
 cd clr-build/mysql-test && ./mtr --suite=unit --parallel=8 --mem
 
 %install
-export SOURCE_DATE_EPOCH=1557031515
+export SOURCE_DATE_EPOCH=1559829709
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/package-licenses/mariadb
 cp COPYING %{buildroot}/usr/share/package-licenses/mariadb/COPYING

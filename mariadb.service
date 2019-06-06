@@ -11,6 +11,7 @@ ExecStart=/usr/bin/mysqld --pid-file=/run/mariadb/mariadb.pid
 TimeoutSec=300
 Restart=always
 PrivateTmp=true
+LimitNOFILE=65536
 
 [Install]
 WantedBy=multi-user.target
