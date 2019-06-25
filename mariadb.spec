@@ -34,7 +34,6 @@ BuildRequires : curl-dev
 BuildRequires : git
 BuildRequires : glibc-dev
 BuildRequires : gnutls-dev
-BuildRequires : jemalloc-dev
 BuildRequires : libaio-dev
 BuildRequires : libxml2-dev
 BuildRequires : ncurses-dev
@@ -51,12 +50,11 @@ Patch2: 0002-Support-stateless-operation-by-migrating-to-usr-file.patch
 Patch3: 0003-Support-includeoptdir-for-non-fatal-inclusion-of-dir.patch
 
 %description
-ZLIB DATA COMPRESSION LIBRARY
-zlib 1.2.11 is a general purpose data compression library.  All the code is
-thread safe.  The data format used by the zlib library is described by RFCs
-(Request for Comments) 1950 to 1952 in the files
-http://tools.ietf.org/html/rfc1950 (zlib format), rfc1951 (deflate format) and
-rfc1952 (gzip format).
+MariaDB is a community developed branch of MySQL - a multi-user, multi-threaded
+SQL database server. It is a client/server implementation consisting of
+a server daemon (mysqld) and many different client programs and libraries.
+The base package contains the standard MariaDB/MySQL client programs and
+generic MySQL files.
 
 %package bin
 Summary: bin components for the mariadb package.
