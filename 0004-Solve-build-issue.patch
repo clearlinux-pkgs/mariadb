@@ -1,0 +1,26 @@
+From 3282880e9409969c19082f6ce859cfd19bef77db Mon Sep 17 00:00:00 2001
+From: Choong, Yin Thong <yin.thong.choong@intel.com>
+Date: Wed, 26 Jun 2019 15:28:06 +0800
+Subject: [PATCH] Solve build issue.
+
+Signed-off-by: Choong, Yin Thong <yin.thong.choong@intel.com>
+---
+ .../rocksdb/utilities/persistent_cache/persistent_cache_util.h  | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/storage/rocksdb/rocksdb/utilities/persistent_cache/persistent_cache_util.h b/storage/rocksdb/rocksdb/utilities/persistent_cache/persistent_cache_util.h
+index 214bb587..254c038f 100644
+--- a/storage/rocksdb/rocksdb/utilities/persistent_cache/persistent_cache_util.h
++++ b/storage/rocksdb/rocksdb/utilities/persistent_cache/persistent_cache_util.h
+@@ -48,7 +48,7 @@ class BoundedQueue {
+     T t = std::move(q_.front());
+     size_ -= t.Size();
+     q_.pop_front();
+-    return std::move(t);
++    return t;
+   }
+ 
+   size_t Size() const {
+-- 
+2.22.0
+

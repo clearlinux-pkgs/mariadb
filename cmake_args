@@ -1,7 +1,7 @@
 -DBUILD_CONFIG=mysql_release
 -DCMAKE_BUILD_TYPE=RelWithDebInfo
--DCMAKE_C_FLAGS="-fPIC $CFLAGS -fno-strict-aliasing -DBIG_JOINS=1 -fomit-frame-pointer -fno-delete-null-pointer-checks"
--DCMAKE_CXX_FLAGS="-fPIC $CXXFLAGS -fno-strict-aliasing -DBIG_JOINS=1 -felide-constructors -fno-rtti -fno-delete-null-pointer-checks"
+-DCMAKE_C_FLAGS="-fPIC $CFLAGS -fno-strict-aliasing -DBIG_JOINS=1 -fomit-frame-pointer"
+-DCMAKE_CXX_FLAGS="-fPIC $CXXFLAGS -fno-strict-aliasing -DBIG_JOINS=1 -felide-constructors"
 -DCMAKE_INSTALL_PREFIX=/usr
 -DENABLED_LOCAL_INFILE=ON
 -DINSTALL_DOCDIR="share/doc/mariadb"

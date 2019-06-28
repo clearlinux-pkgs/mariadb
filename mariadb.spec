@@ -5,15 +5,15 @@
 # Source0 file verified with key 0xCBCB082A1BB943DB (package-signing-key@mariadb.org)
 #
 Name     : mariadb
-Version  : 10.3.13
-Release  : 65
-URL      : https://downloads.mariadb.com/MariaDB/mariadb-10.3.13/source/mariadb-10.3.13.tar.gz
-Source0  : https://downloads.mariadb.com/MariaDB/mariadb-10.3.13/source/mariadb-10.3.13.tar.gz
+Version  : 10.4.6
+Release  : 66
+URL      : https://downloads.mariadb.com/MariaDB/mariadb-10.4.6/source/mariadb-10.4.6.tar.gz
+Source0  : https://downloads.mariadb.com/MariaDB/mariadb-10.4.6/source/mariadb-10.4.6.tar.gz
 Source1  : mariadb-install-db.service
 Source2  : mariadb.service
 Source3  : mariadb.tmpfiles
-Source99 : https://downloads.mariadb.com/MariaDB/mariadb-10.3.13/source/mariadb-10.3.13.tar.gz.asc
-Summary  : Fast SQL database server, derived from MySQL
+Source99 : https://downloads.mariadb.com/MariaDB/mariadb-10.4.6/source/mariadb-10.4.6.tar.gz.asc
+Summary  : MariaDB Connector/C dynamic library
 Group    : Development/Tools
 License  : AGPL-3.0 Apache-2.0 BSD-3-Clause BSD-3-Clause-Clear CC-BY-4.0 GPL-2.0 GPL-3.0 LGPL-2.1 OpenSSL
 Requires: mariadb-bin = %{version}-%{release}
@@ -23,6 +23,7 @@ Requires: mariadb-lib = %{version}-%{release}
 Requires: mariadb-license = %{version}-%{release}
 Requires: mariadb-man = %{version}-%{release}
 Requires: mariadb-services = %{version}-%{release}
+Requires: mariadb-extras-clientlib = %{version}-%{release}
 BuildRequires : Linux-PAM-dev
 BuildRequires : bison
 BuildRequires : bison-dev
@@ -31,6 +32,7 @@ BuildRequires : buildreq-cmake
 BuildRequires : buildreq-distutils3
 BuildRequires : buildreq-php
 BuildRequires : curl-dev
+BuildRequires : doxygen
 BuildRequires : git
 BuildRequires : glibc-dev
 BuildRequires : gnutls-dev
@@ -41,6 +43,7 @@ BuildRequires : ncurses-dev
 BuildRequires : openjdk9
 BuildRequires : openjdk9-dev
 BuildRequires : openssl-dev
+BuildRequires : pcre-dev
 BuildRequires : pkgconfig(liblz4)
 BuildRequires : pkgconfig(libpcre)
 BuildRequires : pkgconfig(libssl)
@@ -48,15 +51,19 @@ BuildRequires : pkgconfig(libzstd)
 BuildRequires : zlib-dev
 Patch1: 0001-Change-default-bind-address-really-to-1-loopback-onl.patch
 Patch2: 0002-Support-stateless-operation-by-migrating-to-usr-file.patch
-Patch3: 0003-Support-includeoptdir-for-non-fatal-inclusion-of-dir.patch
+Patch3: 0004-Solve-build-issue.patch
 
 %description
-ZLIB DATA COMPRESSION LIBRARY
-zlib 1.2.11 is a general purpose data compression library.  All the code is
-thread safe.  The data format used by the zlib library is described by RFCs
-(Request for Comments) 1950 to 1952 in the files
-http://tools.ietf.org/html/rfc1950 (zlib format), rfc1951 (deflate format) and
-rfc1952 (gzip format).
+*** Description ***
+The wolfSSL embedded SSL library (formerly CyaSSL) is a lightweight SSL/TLS
+library written in ANSI C and targeted for embedded, RTOS, and
+resource-constrained environments - primarily because of its small size, speed,
+and feature set.  It is commonly used in standard operating environments as well
+because of its royalty-free pricing and excellent cross platform support.
+wolfSSL supports industry standards up to the current TLS 1.3 and DTLS 1.2
+levels, is up to 20 times smaller than OpenSSL, and offers progressive ciphers
+such as ChaCha20, Curve25519, NTRU, and Blake2b. User benchmarking and feedback
+reports dramatically better performance when using wolfSSL over OpenSSL.
 
 %package bin
 Summary: bin components for the mariadb package.
@@ -94,7 +101,6 @@ Requires: mariadb-bin = %{version}-%{release}
 Requires: mariadb-data = %{version}-%{release}
 Provides: mariadb-devel = %{version}-%{release}
 Requires: mariadb = %{version}-%{release}
-Requires: mariadb = %{version}-%{release}
 
 %description dev
 dev components for the mariadb package.
@@ -115,6 +121,14 @@ Group: Default
 
 %description extras
 extras components for the mariadb package.
+
+
+%package extras-clientlib
+Summary: extras-clientlib components for the mariadb package.
+Group: Default
+
+%description extras-clientlib
+extras-clientlib components for the mariadb package.
 
 
 %package lib
@@ -152,7 +166,7 @@ services components for the mariadb package.
 
 
 %prep
-%setup -q -n mariadb-10.3.13
+%setup -q -n mariadb-10.4.6
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
@@ -162,17 +176,18 @@ export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C
-export SOURCE_DATE_EPOCH=1559829709
+export SOURCE_DATE_EPOCH=1561685604
 mkdir -p clr-build
 pushd clr-build
+export GCC_IGNORE_WERROR=1
 export CFLAGS="$CFLAGS -O3 -falign-functions=32 -fno-lto -fno-math-errno -fno-semantic-interposition -fno-trapping-math "
 export FCFLAGS="$CFLAGS -O3 -falign-functions=32 -fno-lto -fno-math-errno -fno-semantic-interposition -fno-trapping-math "
 export FFLAGS="$CFLAGS -O3 -falign-functions=32 -fno-lto -fno-math-errno -fno-semantic-interposition -fno-trapping-math "
 export CXXFLAGS="$CXXFLAGS -O3 -falign-functions=32 -fno-lto -fno-math-errno -fno-semantic-interposition -fno-trapping-math "
 %cmake .. -DBUILD_CONFIG=mysql_release \
 -DCMAKE_BUILD_TYPE=RelWithDebInfo \
--DCMAKE_C_FLAGS="-fPIC $CFLAGS -fno-strict-aliasing -DBIG_JOINS=1 -fomit-frame-pointer -fno-delete-null-pointer-checks" \
--DCMAKE_CXX_FLAGS="-fPIC $CXXFLAGS -fno-strict-aliasing -DBIG_JOINS=1 -felide-constructors -fno-rtti -fno-delete-null-pointer-checks" \
+-DCMAKE_C_FLAGS="-fPIC $CFLAGS -fno-strict-aliasing -DBIG_JOINS=1 -fomit-frame-pointer" \
+-DCMAKE_CXX_FLAGS="-fPIC $CXXFLAGS -fno-strict-aliasing -DBIG_JOINS=1 -felide-constructors" \
 -DCMAKE_INSTALL_PREFIX=/usr \
 -DENABLED_LOCAL_INFILE=ON \
 -DINSTALL_DOCDIR="share/doc/mariadb" \
@@ -201,10 +216,11 @@ export CXXFLAGS="$CXXFLAGS -O3 -falign-functions=32 -fno-lto -fno-math-errno -fn
 -DWITH_ZLIB=system \
 -DWITHOUT_MROONGA=True \
 -DWITHOUT_TOKUDB=True
-make  %{?_smp_mflags}
+make  %{?_smp_mflags} VERBOSE=1
 popd
 mkdir -p clr-build-avx2
 pushd clr-build-avx2
+export GCC_IGNORE_WERROR=1
 export CFLAGS="$CFLAGS -O3 -falign-functions=32 -fno-lto -fno-math-errno -fno-semantic-interposition -fno-trapping-math -march=haswell "
 export FCFLAGS="$CFLAGS -O3 -falign-functions=32 -fno-lto -fno-math-errno -fno-semantic-interposition -fno-trapping-math -march=haswell "
 export FFLAGS="$CFLAGS -O3 -falign-functions=32 -fno-lto -fno-math-errno -fno-semantic-interposition -fno-trapping-math -march=haswell "
@@ -213,8 +229,8 @@ export CFLAGS="$CFLAGS -march=haswell -m64"
 export CXXFLAGS="$CXXFLAGS -march=haswell -m64"
 %cmake .. -DBUILD_CONFIG=mysql_release \
 -DCMAKE_BUILD_TYPE=RelWithDebInfo \
--DCMAKE_C_FLAGS="-fPIC $CFLAGS -fno-strict-aliasing -DBIG_JOINS=1 -fomit-frame-pointer -fno-delete-null-pointer-checks" \
--DCMAKE_CXX_FLAGS="-fPIC $CXXFLAGS -fno-strict-aliasing -DBIG_JOINS=1 -felide-constructors -fno-rtti -fno-delete-null-pointer-checks" \
+-DCMAKE_C_FLAGS="-fPIC $CFLAGS -fno-strict-aliasing -DBIG_JOINS=1 -fomit-frame-pointer" \
+-DCMAKE_CXX_FLAGS="-fPIC $CXXFLAGS -fno-strict-aliasing -DBIG_JOINS=1 -felide-constructors" \
 -DCMAKE_INSTALL_PREFIX=/usr \
 -DENABLED_LOCAL_INFILE=ON \
 -DINSTALL_DOCDIR="share/doc/mariadb" \
@@ -243,7 +259,7 @@ export CXXFLAGS="$CXXFLAGS -march=haswell -m64"
 -DWITH_ZLIB=system \
 -DWITHOUT_MROONGA=True \
 -DWITHOUT_TOKUDB=True
-make  %{?_smp_mflags}
+make  %{?_smp_mflags} VERBOSE=1
 popd
 
 %check
@@ -254,14 +270,13 @@ export no_proxy=localhost,127.0.0.1,0.0.0.0
 cd clr-build/mysql-test && ./mtr --suite=unit --parallel=8 --mem
 
 %install
-export SOURCE_DATE_EPOCH=1559829709
+export SOURCE_DATE_EPOCH=1561685604
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/package-licenses/mariadb
 cp COPYING %{buildroot}/usr/share/package-licenses/mariadb/COPYING
-cp COPYING.thirdparty %{buildroot}/usr/share/package-licenses/mariadb/COPYING.thirdparty
+cp debian/copyright %{buildroot}/usr/share/package-licenses/mariadb/debian_copyright
 cp extra/readline/COPYING %{buildroot}/usr/share/package-licenses/mariadb/extra_readline_COPYING
-cp extra/yassl/COPYING %{buildroot}/usr/share/package-licenses/mariadb/extra_yassl_COPYING
-cp extra/yassl/taocrypt/COPYING %{buildroot}/usr/share/package-licenses/mariadb/extra_yassl_taocrypt_COPYING
+cp extra/wolfssl/wolfssl/COPYING %{buildroot}/usr/share/package-licenses/mariadb/extra_wolfssl_wolfssl_COPYING
 cp libmariadb/COPYING.LIB %{buildroot}/usr/share/package-licenses/mariadb/libmariadb_COPYING.LIB
 cp libmariadb/cmake/COPYING-CMAKE-SCRIPTS %{buildroot}/usr/share/package-licenses/mariadb/libmariadb_cmake_COPYING-CMAKE-SCRIPTS
 cp pcre/LICENCE %{buildroot}/usr/share/package-licenses/mariadb/pcre_LICENCE
@@ -288,6 +303,9 @@ cp storage/tokudb/PerconaFT/third_party/xz-4.999.9beta/COPYING.GPLv2 %{buildroot
 cp storage/tokudb/PerconaFT/third_party/xz-4.999.9beta/COPYING.GPLv3 %{buildroot}/usr/share/package-licenses/mariadb/storage_tokudb_PerconaFT_third_party_xz-4.999.9beta_COPYING.GPLv3
 cp storage/tokudb/PerconaFT/third_party/xz-4.999.9beta/COPYING.LGPLv2.1 %{buildroot}/usr/share/package-licenses/mariadb/storage_tokudb_PerconaFT_third_party_xz-4.999.9beta_COPYING.LGPLv2.1
 cp vio/docs/COPYING.openssl %{buildroot}/usr/share/package-licenses/mariadb/vio_docs_COPYING.openssl
+cp win/packaging/COPYING.rtf %{buildroot}/usr/share/package-licenses/mariadb/win_packaging_COPYING.rtf
+cp wsrep-lib/LICENSE %{buildroot}/usr/share/package-licenses/mariadb/wsrep-lib_LICENSE
+cp wsrep-lib/wsrep-API/v26/COPYING %{buildroot}/usr/share/package-licenses/mariadb/wsrep-lib_wsrep-API_v26_COPYING
 pushd clr-build-avx2
 %make_install_avx2  || :
 popd
@@ -308,6 +326,7 @@ ln -s ../share/mariadb/wsrep_sst_common %{buildroot}/usr/bin/wsrep_sst_common
 
 %files
 %defattr(-,root,root,-)
+/usr/lib64/mysql/plugin/auth_pam_tool_dir/auth_pam_tool
 /usr/lib64/mysql/plugin/daemon_example.ini
 
 %files bin
@@ -327,7 +346,28 @@ ln -s ../share/mariadb/wsrep_sst_common %{buildroot}/usr/bin/wsrep_sst_common
 /usr/bin/haswell/aria_read_log
 /usr/bin/haswell/innochecksum
 /usr/bin/haswell/mariabackup
+/usr/bin/haswell/mariadb
+/usr/bin/haswell/mariadb-admin
+/usr/bin/haswell/mariadb-backup
+/usr/bin/haswell/mariadb-binlog
+/usr/bin/haswell/mariadb-check
+/usr/bin/haswell/mariadb-client-test
+/usr/bin/haswell/mariadb-client-test-embedded
+/usr/bin/haswell/mariadb-dump
+/usr/bin/haswell/mariadb-embedded
+/usr/bin/haswell/mariadb-import
+/usr/bin/haswell/mariadb-ldb
+/usr/bin/haswell/mariadb-plugin
+/usr/bin/haswell/mariadb-show
+/usr/bin/haswell/mariadb-slap
+/usr/bin/haswell/mariadb-test
+/usr/bin/haswell/mariadb-test-embedded
+/usr/bin/haswell/mariadb-tzinfo-to-sql
+/usr/bin/haswell/mariadb-upgrade
+/usr/bin/haswell/mariadb-waitpid
 /usr/bin/haswell/mariadb_config
+/usr/bin/haswell/mariadbd
+/usr/bin/haswell/mariadbd-safe-helper
 /usr/bin/haswell/mbstream
 /usr/bin/haswell/my_print_defaults
 /usr/bin/haswell/myisam_ftdump
@@ -362,7 +402,39 @@ ln -s ../share/mariadb/wsrep_sst_common %{buildroot}/usr/bin/wsrep_sst_common
 /usr/bin/haswell/test-connect-t
 /usr/bin/innochecksum
 /usr/bin/mariabackup
+/usr/bin/mariadb
+/usr/bin/mariadb-access
+/usr/bin/mariadb-admin
+/usr/bin/mariadb-backup
+/usr/bin/mariadb-binlog
+/usr/bin/mariadb-check
+/usr/bin/mariadb-client-test
+/usr/bin/mariadb-client-test-embedded
+/usr/bin/mariadb-convert-table-format
+/usr/bin/mariadb-dump
+/usr/bin/mariadb-dumpslow
+/usr/bin/mariadb-embedded
+/usr/bin/mariadb-find-rows
+/usr/bin/mariadb-fix-extensions
+/usr/bin/mariadb-hotcopy
+/usr/bin/mariadb-import
+/usr/bin/mariadb-install-db
+/usr/bin/mariadb-ldb
+/usr/bin/mariadb-plugin
+/usr/bin/mariadb-secure-installation
+/usr/bin/mariadb-setpermission
+/usr/bin/mariadb-show
+/usr/bin/mariadb-slap
+/usr/bin/mariadb-test
+/usr/bin/mariadb-test-embedded
+/usr/bin/mariadb-tzinfo-to-sql
+/usr/bin/mariadb-upgrade
+/usr/bin/mariadb-waitpid
 /usr/bin/mariadb_config
+/usr/bin/mariadbd
+/usr/bin/mariadbd-multi
+/usr/bin/mariadbd-safe
+/usr/bin/mariadbd-safe-helper
 /usr/bin/mbstream
 /usr/bin/msql2mysql
 /usr/bin/my_print_defaults
@@ -516,6 +588,7 @@ ln -s ../share/mariadb/wsrep_sst_common %{buildroot}/usr/bin/wsrep_sst_common
 /usr/include/mysql/mariadb_com.h
 /usr/include/mysql/mariadb_ctype.h
 /usr/include/mysql/mariadb_dyncol.h
+/usr/include/mysql/mariadb_rpl.h
 /usr/include/mysql/mariadb_stmt.h
 /usr/include/mysql/mariadb_version.h
 /usr/include/mysql/my_config.h
@@ -585,6 +658,7 @@ ln -s ../share/mariadb/wsrep_sst_common %{buildroot}/usr/bin/wsrep_sst_common
 /usr/include/mysql/server/mysql/service_debug_sync.h
 /usr/include/mysql/server/mysql/service_encryption.h
 /usr/include/mysql/server/mysql/service_encryption_scheme.h
+/usr/include/mysql/server/mysql/service_json.h
 /usr/include/mysql/server/mysql/service_kill_statement.h
 /usr/include/mysql/server/mysql/service_logger.h
 /usr/include/mysql/server/mysql/service_md5.h
@@ -611,11 +685,13 @@ ln -s ../share/mariadb/wsrep_sst_common %{buildroot}/usr/bin/wsrep_sst_common
 /usr/include/mysql/server/mysqld_ername.h
 /usr/include/mysql/server/mysqld_error.h
 /usr/include/mysql/server/pack.h
+/usr/include/mysql/server/private/aria_backup.h
 /usr/include/mysql/server/private/atomic/gcc_builtins.h
 /usr/include/mysql/server/private/atomic/gcc_sync.h
 /usr/include/mysql/server/private/atomic/generic-msvc.h
 /usr/include/mysql/server/private/atomic/solaris.h
 /usr/include/mysql/server/private/authors.h
+/usr/include/mysql/server/private/backup.h
 /usr/include/mysql/server/private/bounded_queue.h
 /usr/include/mysql/server/private/client_settings.h
 /usr/include/mysql/server/private/compat56.h
@@ -625,6 +701,7 @@ ln -s ../share/mariadb/wsrep_sst_common %{buildroot}/usr/bin/wsrep_sst_common
 /usr/include/mysql/server/private/custom_conf.h
 /usr/include/mysql/server/private/datadict.h
 /usr/include/mysql/server/private/debug_sync.h
+/usr/include/mysql/server/private/derived_handler.h
 /usr/include/mysql/server/private/derror.h
 /usr/include/mysql/server/private/des_key_file.h
 /usr/include/mysql/server/private/discover.h
@@ -647,6 +724,7 @@ ln -s ../share/mariadb/wsrep_sst_common %{buildroot}/usr/bin/wsrep_sst_common
 /usr/include/mysql/server/private/gstream.h
 /usr/include/mysql/server/private/ha_partition.h
 /usr/include/mysql/server/private/ha_sequence.h
+/usr/include/mysql/server/private/handle_connections_win.h
 /usr/include/mysql/server/private/handler.h
 /usr/include/mysql/server/private/hash.h
 /usr/include/mysql/server/private/hash_filo.h
@@ -695,6 +773,7 @@ ln -s ../share/mariadb/wsrep_sst_common %{buildroot}/usr/bin/wsrep_sst_common
 /usr/include/mysql/server/private/my_check_opt.h
 /usr/include/mysql/server/private/my_compare.h
 /usr/include/mysql/server/private/my_context.h
+/usr/include/mysql/server/private/my_counter.h
 /usr/include/mysql/server/private/my_cpu.h
 /usr/include/mysql/server/private/my_crypt.h
 /usr/include/mysql/server/private/my_decimal.h
@@ -724,6 +803,8 @@ ln -s ../share/mariadb/wsrep_sst_common %{buildroot}/usr/bin/wsrep_sst_common
 /usr/include/mysql/server/private/nt_servc.h
 /usr/include/mysql/server/private/opt_range.h
 /usr/include/mysql/server/private/opt_subselect.h
+/usr/include/mysql/server/private/opt_trace.h
+/usr/include/mysql/server/private/opt_trace_context.h
 /usr/include/mysql/server/private/parse_file.h
 /usr/include/mysql/server/private/partition_element.h
 /usr/include/mysql/server/private/partition_info.h
@@ -739,6 +820,7 @@ ln -s ../share/mariadb/wsrep_sst_common %{buildroot}/usr/bin/wsrep_sst_common
 /usr/include/mysql/server/private/repl_failsafe.h
 /usr/include/mysql/server/private/replication.h
 /usr/include/mysql/server/private/rijndael.h
+/usr/include/mysql/server/private/rowid_filter.h
 /usr/include/mysql/server/private/rpl_constants.h
 /usr/include/mysql/server/private/rpl_filter.h
 /usr/include/mysql/server/private/rpl_gtid.h
@@ -752,6 +834,7 @@ ln -s ../share/mariadb/wsrep_sst_common %{buildroot}/usr/bin/wsrep_sst_common
 /usr/include/mysql/server/private/rpl_tblmap.h
 /usr/include/mysql/server/private/rpl_utility.h
 /usr/include/mysql/server/private/scheduler.h
+/usr/include/mysql/server/private/select_handler.h
 /usr/include/mysql/server/private/semisync.h
 /usr/include/mysql/server/private/semisync_master.h
 /usr/include/mysql/server/private/semisync_master_ack_receiver.h
@@ -839,6 +922,8 @@ ln -s ../share/mariadb/wsrep_sst_common %{buildroot}/usr/bin/wsrep_sst_common
 /usr/include/mysql/server/private/sql_tvc.h
 /usr/include/mysql/server/private/sql_type.h
 /usr/include/mysql/server/private/sql_type_int.h
+/usr/include/mysql/server/private/sql_type_json.h
+/usr/include/mysql/server/private/sql_type_real.h
 /usr/include/mysql/server/private/sql_udf.h
 /usr/include/mysql/server/private/sql_union.h
 /usr/include/mysql/server/private/sql_update.h
@@ -867,19 +952,32 @@ ln -s ../share/mariadb/wsrep_sst_common %{buildroot}/usr/bin/wsrep_sst_common
 /usr/include/mysql/server/private/violite.h
 /usr/include/mysql/server/private/waiting_threads.h
 /usr/include/mysql/server/private/welcome_copyright_notice.h
+/usr/include/mysql/server/private/win_tzname_data.h
 /usr/include/mysql/server/private/winservice.h
 /usr/include/mysql/server/private/wqueue.h
 /usr/include/mysql/server/private/wsrep.h
 /usr/include/mysql/server/private/wsrep_applier.h
 /usr/include/mysql/server/private/wsrep_binlog.h
+/usr/include/mysql/server/private/wsrep_client_service.h
+/usr/include/mysql/server/private/wsrep_client_state.h
+/usr/include/mysql/server/private/wsrep_condition_variable.h
+/usr/include/mysql/server/private/wsrep_high_priority_service.h
+/usr/include/mysql/server/private/wsrep_mutex.h
 /usr/include/mysql/server/private/wsrep_mysqld.h
 /usr/include/mysql/server/private/wsrep_mysqld_c.h
 /usr/include/mysql/server/private/wsrep_priv.h
+/usr/include/mysql/server/private/wsrep_schema.h
+/usr/include/mysql/server/private/wsrep_server_service.h
+/usr/include/mysql/server/private/wsrep_server_state.h
 /usr/include/mysql/server/private/wsrep_sst.h
+/usr/include/mysql/server/private/wsrep_storage_service.h
 /usr/include/mysql/server/private/wsrep_thd.h
+/usr/include/mysql/server/private/wsrep_trans_observer.h
+/usr/include/mysql/server/private/wsrep_types.h
 /usr/include/mysql/server/private/wsrep_utils.h
 /usr/include/mysql/server/private/wsrep_var.h
 /usr/include/mysql/server/private/wsrep_xid.h
+/usr/include/mysql/server/private/xa.h
 /usr/include/mysql/server/sql_common.h
 /usr/include/mysql/server/sql_state.h
 /usr/include/mysql/server/sslopt-case.h
@@ -908,18 +1006,23 @@ ln -s ../share/mariadb/wsrep_sst_common %{buildroot}/usr/bin/wsrep_sst_common
 /usr/bin/mysql_embedded
 /usr/bin/mysqltest_embedded
 
-%files lib
+%files extras-clientlib
 %defattr(-,root,root,-)
 /usr/lib64/haswell/libmariadb.so.3
-/usr/lib64/haswell/libmariadbd.so.19
 /usr/lib64/libmariadb.so.3
+
+%files lib
+%defattr(-,root,root,-)
+%exclude /usr/lib64/haswell/libmariadb.so.3
+%exclude /usr/lib64/libmariadb.so.3
+/usr/lib64/haswell/libmariadbd.so.19
 /usr/lib64/libmariadbd.so.19
 /usr/lib64/mysql/plugin/adt_null.so
 /usr/lib64/mysql/plugin/auth_0x0100.so
 /usr/lib64/mysql/plugin/auth_ed25519.so
 /usr/lib64/mysql/plugin/auth_ed25519.so.avx2
 /usr/lib64/mysql/plugin/auth_pam.so
-/usr/lib64/mysql/plugin/auth_socket.so
+/usr/lib64/mysql/plugin/auth_pam_v1.so
 /usr/lib64/mysql/plugin/auth_test_plugin.so
 /usr/lib64/mysql/plugin/caching_sha2_password.so
 /usr/lib64/mysql/plugin/client_ed25519.so
@@ -969,10 +1072,9 @@ ln -s ../share/mariadb/wsrep_sst_common %{buildroot}/usr/bin/wsrep_sst_common
 %files license
 %defattr(0644,root,root,0755)
 /usr/share/package-licenses/mariadb/COPYING
-/usr/share/package-licenses/mariadb/COPYING.thirdparty
+/usr/share/package-licenses/mariadb/debian_copyright
 /usr/share/package-licenses/mariadb/extra_readline_COPYING
-/usr/share/package-licenses/mariadb/extra_yassl_COPYING
-/usr/share/package-licenses/mariadb/extra_yassl_taocrypt_COPYING
+/usr/share/package-licenses/mariadb/extra_wolfssl_wolfssl_COPYING
 /usr/share/package-licenses/mariadb/libmariadb_COPYING.LIB
 /usr/share/package-licenses/mariadb/libmariadb_cmake_COPYING-CMAKE-SCRIPTS
 /usr/share/package-licenses/mariadb/pcre_LICENCE
@@ -999,6 +1101,9 @@ ln -s ../share/mariadb/wsrep_sst_common %{buildroot}/usr/bin/wsrep_sst_common
 /usr/share/package-licenses/mariadb/storage_tokudb_PerconaFT_third_party_xz-4.999.9beta_COPYING.GPLv3
 /usr/share/package-licenses/mariadb/storage_tokudb_PerconaFT_third_party_xz-4.999.9beta_COPYING.LGPLv2.1
 /usr/share/package-licenses/mariadb/vio_docs_COPYING.openssl
+/usr/share/package-licenses/mariadb/win_packaging_COPYING.rtf
+/usr/share/package-licenses/mariadb/wsrep-lib_LICENSE
+/usr/share/package-licenses/mariadb/wsrep-lib_wsrep-API_v26_COPYING
 
 %files man
 %defattr(0644,root,root,0755)
@@ -1011,7 +1116,38 @@ ln -s ../share/mariadb/wsrep_sst_common %{buildroot}/usr/bin/wsrep_sst_common
 /usr/share/man/man1/galera_recovery.1
 /usr/share/man/man1/innochecksum.1
 /usr/share/man/man1/mariabackup.1
+/usr/share/man/man1/mariadb-access.1
+/usr/share/man/man1/mariadb-admin.1
+/usr/share/man/man1/mariadb-backup.1
+/usr/share/man/man1/mariadb-binlog.1
+/usr/share/man/man1/mariadb-check.1
+/usr/share/man/man1/mariadb-client-test-embedded.1
+/usr/share/man/man1/mariadb-client-test.1
+/usr/share/man/man1/mariadb-convert-table-format.1
+/usr/share/man/man1/mariadb-dump.1
+/usr/share/man/man1/mariadb-dumpslow.1
+/usr/share/man/man1/mariadb-embedded.1
+/usr/share/man/man1/mariadb-find-rows.1
+/usr/share/man/man1/mariadb-fix-extensions.1
+/usr/share/man/man1/mariadb-hotcopy.1
+/usr/share/man/man1/mariadb-import.1
+/usr/share/man/man1/mariadb-install-db.1
+/usr/share/man/man1/mariadb-ldb.1
+/usr/share/man/man1/mariadb-plugin.1
+/usr/share/man/man1/mariadb-secure-installation.1
 /usr/share/man/man1/mariadb-service-convert.1
+/usr/share/man/man1/mariadb-setpermission.1
+/usr/share/man/man1/mariadb-show.1
+/usr/share/man/man1/mariadb-slap.1
+/usr/share/man/man1/mariadb-test-embedded.1
+/usr/share/man/man1/mariadb-test.1
+/usr/share/man/man1/mariadb-tzinfo-to-sql.1
+/usr/share/man/man1/mariadb-upgrade.1
+/usr/share/man/man1/mariadb-waitpid.1
+/usr/share/man/man1/mariadb.1
+/usr/share/man/man1/mariadbd-multi.1
+/usr/share/man/man1/mariadbd-safe-helper.1
+/usr/share/man/man1/mariadbd-safe.1
 /usr/share/man/man1/mbstream.1
 /usr/share/man/man1/msql2mysql.1
 /usr/share/man/man1/my_print_defaults.1
@@ -1065,6 +1201,7 @@ ln -s ../share/mariadb/wsrep_sst_common %{buildroot}/usr/bin/wsrep_sst_common
 /usr/share/man/man1/wsrep_sst_mysqldump.1
 /usr/share/man/man1/wsrep_sst_rsync.1
 /usr/share/man/man1/wsrep_sst_rsync_wan.1
+/usr/share/man/man8/mariadbd.8
 /usr/share/man/man8/mysqld.8
 
 %files services
