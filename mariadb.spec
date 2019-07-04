@@ -6,7 +6,7 @@
 #
 Name     : mariadb
 Version  : 10.4.6
-Release  : 67
+Release  : 68
 URL      : https://downloads.mariadb.com/MariaDB/mariadb-10.4.6/source/mariadb-10.4.6.tar.gz
 Source0  : https://downloads.mariadb.com/MariaDB/mariadb-10.4.6/source/mariadb-10.4.6.tar.gz
 Source1  : mariadb-install-db.service
@@ -175,7 +175,7 @@ export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C.UTF-8
-export SOURCE_DATE_EPOCH=1562242372
+export SOURCE_DATE_EPOCH=1562245602
 mkdir -p clr-build
 pushd clr-build
 export GCC_IGNORE_WERROR=1
@@ -214,7 +214,8 @@ export CXXFLAGS="$CXXFLAGS -O3 -falign-functions=32 -fno-lto -fno-math-errno -fn
 -DWITH_SSL=system \
 -DWITH_ZLIB=system \
 -DWITHOUT_MROONGA=True \
--DWITHOUT_TOKUDB=True
+-DWITHOUT_TOKUDB=True \
+-DWSREP_LIB_WITH_COVERAGE=True
 make  %{?_smp_mflags} VERBOSE=1
 popd
 mkdir -p clr-build-avx2
@@ -257,7 +258,8 @@ export CXXFLAGS="$CXXFLAGS -march=haswell -m64"
 -DWITH_SSL=system \
 -DWITH_ZLIB=system \
 -DWITHOUT_MROONGA=True \
--DWITHOUT_TOKUDB=True
+-DWITHOUT_TOKUDB=True \
+-DWSREP_LIB_WITH_COVERAGE=True
 make  %{?_smp_mflags} VERBOSE=1
 popd
 
@@ -269,7 +271,7 @@ export no_proxy=localhost,127.0.0.1,0.0.0.0
 cd clr-build/mysql-test && ./mtr --suite=unit --parallel=8 --mem
 
 %install
-export SOURCE_DATE_EPOCH=1562242372
+export SOURCE_DATE_EPOCH=1562245602
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/package-licenses/mariadb
 cp COPYING %{buildroot}/usr/share/package-licenses/mariadb/COPYING
@@ -321,6 +323,8 @@ rm -rf %{buildroot}/usr/share/mysql-test
 mkdir -p %{buildroot}/usr/share/mariadb/
 mv %{buildroot}/usr/bin/wsrep_sst_common %{buildroot}/usr/share/mariadb
 ln -s ../share/mariadb/wsrep_sst_common %{buildroot}/usr/bin/wsrep_sst_common
+install -m 0755 clr-build/wsrep-lib/src/libwsrep-lib.so %{buildroot}/usr/lib64
+install -m 0755 clr-build/wsrep-lib/wsrep-API/libwsrep_api_v26.so %{buildroot}/usr/lib64
 ## install_append end
 
 %files
@@ -993,6 +997,8 @@ ln -s ../share/mariadb/wsrep_sst_common %{buildroot}/usr/bin/wsrep_sst_common
 /usr/lib64/libmysqlclient.so
 /usr/lib64/libmysqlclient_r.so
 /usr/lib64/libmysqld.so
+/usr/lib64/libwsrep-lib.so
+/usr/lib64/libwsrep_api_v26.so
 /usr/lib64/pkgconfig/libmariadb.pc
 
 %files doc
