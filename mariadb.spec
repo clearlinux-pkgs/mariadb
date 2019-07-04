@@ -6,7 +6,7 @@
 #
 Name     : mariadb
 Version  : 10.4.6
-Release  : 68
+Release  : 69
 URL      : https://downloads.mariadb.com/MariaDB/mariadb-10.4.6/source/mariadb-10.4.6.tar.gz
 Source0  : https://downloads.mariadb.com/MariaDB/mariadb-10.4.6/source/mariadb-10.4.6.tar.gz
 Source1  : mariadb-install-db.service
@@ -175,7 +175,7 @@ export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C.UTF-8
-export SOURCE_DATE_EPOCH=1562245602
+export SOURCE_DATE_EPOCH=1562246885
 mkdir -p clr-build
 pushd clr-build
 export GCC_IGNORE_WERROR=1
@@ -271,7 +271,7 @@ export no_proxy=localhost,127.0.0.1,0.0.0.0
 cd clr-build/mysql-test && ./mtr --suite=unit --parallel=8 --mem
 
 %install
-export SOURCE_DATE_EPOCH=1562245602
+export SOURCE_DATE_EPOCH=1562246885
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/package-licenses/mariadb
 cp COPYING %{buildroot}/usr/share/package-licenses/mariadb/COPYING
@@ -987,18 +987,6 @@ install -m 0755 clr-build/wsrep-lib/wsrep-API/libwsrep_api_v26.so %{buildroot}/u
 /usr/include/mysql/server/sslopt-longopts.h
 /usr/include/mysql/server/sslopt-vars.h
 /usr/include/mysql/server/typelib.h
-/usr/lib64/haswell/libmariadb.so
-/usr/lib64/haswell/libmariadbd.so
-/usr/lib64/haswell/libmysqlclient.so
-/usr/lib64/haswell/libmysqlclient_r.so
-/usr/lib64/haswell/libmysqld.so
-/usr/lib64/libmariadb.so
-/usr/lib64/libmariadbd.so
-/usr/lib64/libmysqlclient.so
-/usr/lib64/libmysqlclient_r.so
-/usr/lib64/libmysqld.so
-/usr/lib64/libwsrep-lib.so
-/usr/lib64/libwsrep_api_v26.so
 /usr/lib64/pkgconfig/libmariadb.pc
 
 %files doc
@@ -1020,8 +1008,20 @@ install -m 0755 clr-build/wsrep-lib/wsrep-API/libwsrep_api_v26.so %{buildroot}/u
 %defattr(-,root,root,-)
 %exclude /usr/lib64/haswell/libmariadb.so.3
 %exclude /usr/lib64/libmariadb.so.3
+/usr/lib64/haswell/libmariadb.so
+/usr/lib64/haswell/libmariadbd.so
 /usr/lib64/haswell/libmariadbd.so.19
+/usr/lib64/haswell/libmysqlclient.so
+/usr/lib64/haswell/libmysqlclient_r.so
+/usr/lib64/haswell/libmysqld.so
+/usr/lib64/libmariadb.so
+/usr/lib64/libmariadbd.so
 /usr/lib64/libmariadbd.so.19
+/usr/lib64/libmysqlclient.so
+/usr/lib64/libmysqlclient_r.so
+/usr/lib64/libmysqld.so
+/usr/lib64/libwsrep-lib.so
+/usr/lib64/libwsrep_api_v26.so
 /usr/lib64/mysql/plugin/adt_null.so
 /usr/lib64/mysql/plugin/auth_0x0100.so
 /usr/lib64/mysql/plugin/auth_ed25519.so
