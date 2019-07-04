@@ -6,14 +6,14 @@
 #
 Name     : mariadb
 Version  : 10.4.6
-Release  : 66
+Release  : 67
 URL      : https://downloads.mariadb.com/MariaDB/mariadb-10.4.6/source/mariadb-10.4.6.tar.gz
 Source0  : https://downloads.mariadb.com/MariaDB/mariadb-10.4.6/source/mariadb-10.4.6.tar.gz
 Source1  : mariadb-install-db.service
 Source2  : mariadb.service
 Source3  : mariadb.tmpfiles
 Source99 : https://downloads.mariadb.com/MariaDB/mariadb-10.4.6/source/mariadb-10.4.6.tar.gz.asc
-Summary  : MariaDB Connector/C dynamic library
+Summary  : Fast SQL database server, derived from MySQL
 Group    : Development/Tools
 License  : AGPL-3.0 Apache-2.0 BSD-3-Clause BSD-3-Clause-Clear CC-BY-4.0 GPL-2.0 GPL-3.0 LGPL-2.1 OpenSSL
 Requires: mariadb-bin = %{version}-%{release}
@@ -52,18 +52,15 @@ BuildRequires : zlib-dev
 Patch1: 0001-Change-default-bind-address-really-to-1-loopback-onl.patch
 Patch2: 0002-Support-stateless-operation-by-migrating-to-usr-file.patch
 Patch3: 0004-Solve-build-issue.patch
+Patch4: avxplugin.patch
 
 %description
-*** Description ***
-The wolfSSL embedded SSL library (formerly CyaSSL) is a lightweight SSL/TLS
-library written in ANSI C and targeted for embedded, RTOS, and
-resource-constrained environments - primarily because of its small size, speed,
-and feature set.  It is commonly used in standard operating environments as well
-because of its royalty-free pricing and excellent cross platform support.
-wolfSSL supports industry standards up to the current TLS 1.3 and DTLS 1.2
-levels, is up to 20 times smaller than OpenSSL, and offers progressive ciphers
-such as ChaCha20, Curve25519, NTRU, and Blake2b. User benchmarking and feedback
-reports dramatically better performance when using wolfSSL over OpenSSL.
+ZLIB DATA COMPRESSION LIBRARY
+zlib 1.2.11 is a general purpose data compression library.  All the code is
+thread safe.  The data format used by the zlib library is described by RFCs
+(Request for Comments) 1950 to 1952 in the files
+http://tools.ietf.org/html/rfc1950 (zlib format), rfc1951 (deflate format) and
+rfc1952 (gzip format).
 
 %package bin
 Summary: bin components for the mariadb package.
@@ -100,6 +97,7 @@ Requires: mariadb-lib = %{version}-%{release}
 Requires: mariadb-bin = %{version}-%{release}
 Requires: mariadb-data = %{version}-%{release}
 Provides: mariadb-devel = %{version}-%{release}
+Requires: mariadb = %{version}-%{release}
 Requires: mariadb = %{version}-%{release}
 
 %description dev
@@ -170,13 +168,14 @@ services components for the mariadb package.
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
+%patch4 -p1
 
 %build
 export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
-export LANG=C
-export SOURCE_DATE_EPOCH=1561685604
+export LANG=C.UTF-8
+export SOURCE_DATE_EPOCH=1562242372
 mkdir -p clr-build
 pushd clr-build
 export GCC_IGNORE_WERROR=1
@@ -263,14 +262,14 @@ make  %{?_smp_mflags} VERBOSE=1
 popd
 
 %check
-export LANG=C
+export LANG=C.UTF-8
 export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 cd clr-build/mysql-test && ./mtr --suite=unit --parallel=8 --mem
 
 %install
-export SOURCE_DATE_EPOCH=1561685604
+export SOURCE_DATE_EPOCH=1562242372
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/package-licenses/mariadb
 cp COPYING %{buildroot}/usr/share/package-licenses/mariadb/COPYING

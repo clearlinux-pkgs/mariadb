@@ -1,0 +1,30 @@
+--- mariadb-10.4.6/sql/sql_plugin.cc~	2019-06-17 22:00:32.000000000 +0000
++++ mariadb-10.4.6/sql/sql_plugin.cc	2019-07-04 11:34:32.180900372 +0000
+@@ -713,6 +713,7 @@
+ {
+ #ifdef HAVE_DLOPEN
+   char dlpath[FN_REFLEN];
++  char dlpath2[FN_REFLEN + 8];
+   size_t plugin_dir_len,i;
+   uint dummy_errors;
+   struct st_plugin_dl *tmp= 0, plugin_dl;
+@@ -747,8 +748,18 @@
+   strxnmov(dlpath, sizeof(dlpath) - 1, opt_plugin_dir, "/", dl->str, NullS);
+   (void) unpack_filename(dlpath, dlpath);
+   plugin_dl.ref_count= 1;
++
++  sprintf(dlpath2, "%s.avx2", dlpath);
++
++  plugin_dl.handle= NULL;
++  if (__builtin_cpu_supports("avx2"))
++	  plugin_dl.handle= dlopen(dlpath2, RTLD_NOW);
++
++  if (!(plugin_dl.handle))
++	  plugin_dl.handle= dlopen(dlpath, RTLD_NOW);
++  
+   /* Open new dll handle */
+-  if (!(plugin_dl.handle= dlopen(dlpath, RTLD_NOW)))
++  if (!(plugin_dl.handle))
+   {
+     my_error(ER_CANT_OPEN_LIBRARY, MyFlags, dlpath, errno, my_dlerror(dlpath));
+     goto ret;
