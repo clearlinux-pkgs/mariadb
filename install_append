@@ -4,3 +4,4 @@ mv %{buildroot}/usr/bin/wsrep_sst_common %{buildroot}/usr/share/mariadb
 ln -s ../share/mariadb/wsrep_sst_common %{buildroot}/usr/bin/wsrep_sst_common
 install -m 0755 clr-build/wsrep-lib/src/libwsrep-lib.so %{buildroot}/usr/lib64
 install -m 0755 clr-build/wsrep-lib/wsrep-API/libwsrep_api_v26.so %{buildroot}/usr/lib64
+chmod -s %{buildroot}/usr/lib64/mysql/plugin/auth_pam_tool_dir/auth_pam_tool
