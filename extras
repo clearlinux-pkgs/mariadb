@@ -7,3 +7,4 @@
 /usr/bin/mariadb-client-test-embedded
 /usr/bin/mariadb-embedded
 /usr/bin/mariadbtest-embedded
+/usr/bin/mariadb-test-embedded

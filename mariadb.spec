@@ -6,7 +6,7 @@
 #
 Name     : mariadb
 Version  : 10.4.6
-Release  : 71
+Release  : 72
 URL      : https://downloads.mariadb.com/MariaDB/mariadb-10.4.6/source/mariadb-10.4.6.tar.gz
 Source0  : https://downloads.mariadb.com/MariaDB/mariadb-10.4.6/source/mariadb-10.4.6.tar.gz
 Source1  : mariadb-install-db.service
@@ -175,7 +175,7 @@ export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C.UTF-8
-export SOURCE_DATE_EPOCH=1562705731
+export SOURCE_DATE_EPOCH=1562780815
 mkdir -p clr-build
 pushd clr-build
 export GCC_IGNORE_WERROR=1
@@ -271,7 +271,7 @@ export no_proxy=localhost,127.0.0.1,0.0.0.0
 cd clr-build/mysql-test && ./mtr --suite=unit --parallel=8 --mem
 
 %install
-export SOURCE_DATE_EPOCH=1562705731
+export SOURCE_DATE_EPOCH=1562780815
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/package-licenses/mariadb
 cp COPYING %{buildroot}/usr/share/package-licenses/mariadb/COPYING
@@ -337,6 +337,7 @@ chmod -s %{buildroot}/usr/lib64/mysql/plugin/auth_pam_tool_dir/auth_pam_tool
 %defattr(-,root,root,-)
 %exclude /usr/bin/mariadb-client-test-embedded
 %exclude /usr/bin/mariadb-embedded
+%exclude /usr/bin/mariadb-test-embedded
 %exclude /usr/bin/mysql_client_test_embedded
 %exclude /usr/bin/mysql_embedded
 %exclude /usr/bin/mysqltest_embedded
@@ -430,7 +431,6 @@ chmod -s %{buildroot}/usr/lib64/mysql/plugin/auth_pam_tool_dir/auth_pam_tool
 /usr/bin/mariadb-show
 /usr/bin/mariadb-slap
 /usr/bin/mariadb-test
-/usr/bin/mariadb-test-embedded
 /usr/bin/mariadb-tzinfo-to-sql
 /usr/bin/mariadb-upgrade
 /usr/bin/mariadb-waitpid
@@ -998,6 +998,7 @@ chmod -s %{buildroot}/usr/lib64/mysql/plugin/auth_pam_tool_dir/auth_pam_tool
 %defattr(-,root,root,-)
 /usr/bin/mariadb-client-test-embedded
 /usr/bin/mariadb-embedded
+/usr/bin/mariadb-test-embedded
 /usr/bin/mysql_client_test_embedded
 /usr/bin/mysql_embedded
 /usr/bin/mysqltest_embedded
