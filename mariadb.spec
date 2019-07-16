@@ -6,14 +6,14 @@
 #
 Name     : mariadb
 Version  : 10.4.6
-Release  : 72
+Release  : 73
 URL      : https://downloads.mariadb.com/MariaDB/mariadb-10.4.6/source/mariadb-10.4.6.tar.gz
 Source0  : https://downloads.mariadb.com/MariaDB/mariadb-10.4.6/source/mariadb-10.4.6.tar.gz
 Source1  : mariadb-install-db.service
 Source2  : mariadb.service
 Source3  : mariadb.tmpfiles
 Source99 : https://downloads.mariadb.com/MariaDB/mariadb-10.4.6/source/mariadb-10.4.6.tar.gz.asc
-Summary  : Fast SQL database server, derived from MySQL
+Summary  : MariaDB Connector/C dynamic library
 Group    : Development/Tools
 License  : AGPL-3.0 Apache-2.0 BSD-3-Clause BSD-3-Clause-Clear CC-BY-4.0 GPL-2.0 GPL-3.0 LGPL-2.1 OpenSSL
 Requires: mariadb-bin = %{version}-%{release}
@@ -55,12 +55,16 @@ Patch3: 0004-Solve-build-issue.patch
 Patch4: avxplugin.patch
 
 %description
-ZLIB DATA COMPRESSION LIBRARY
-zlib 1.2.11 is a general purpose data compression library.  All the code is
-thread safe.  The data format used by the zlib library is described by RFCs
-(Request for Comments) 1950 to 1952 in the files
-http://tools.ietf.org/html/rfc1950 (zlib format), rfc1951 (deflate format) and
-rfc1952 (gzip format).
+*** Description ***
+The wolfSSL embedded SSL library (formerly CyaSSL) is a lightweight SSL/TLS
+library written in ANSI C and targeted for embedded, RTOS, and
+resource-constrained environments - primarily because of its small size, speed,
+and feature set.  It is commonly used in standard operating environments as well
+because of its royalty-free pricing and excellent cross platform support.
+wolfSSL supports industry standards up to the current TLS 1.3 and DTLS 1.2
+levels, is up to 20 times smaller than OpenSSL, and offers progressive ciphers
+such as ChaCha20, Curve25519, NTRU, and Blake2b. User benchmarking and feedback
+reports dramatically better performance when using wolfSSL over OpenSSL.
 
 %package bin
 Summary: bin components for the mariadb package.
@@ -97,7 +101,6 @@ Requires: mariadb-lib = %{version}-%{release}
 Requires: mariadb-bin = %{version}-%{release}
 Requires: mariadb-data = %{version}-%{release}
 Provides: mariadb-devel = %{version}-%{release}
-Requires: mariadb = %{version}-%{release}
 Requires: mariadb = %{version}-%{release}
 
 %description dev
@@ -175,7 +178,7 @@ export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C.UTF-8
-export SOURCE_DATE_EPOCH=1562780815
+export SOURCE_DATE_EPOCH=1563268600
 mkdir -p clr-build
 pushd clr-build
 export GCC_IGNORE_WERROR=1
@@ -271,7 +274,7 @@ export no_proxy=localhost,127.0.0.1,0.0.0.0
 cd clr-build/mysql-test && ./mtr --suite=unit --parallel=8 --mem
 
 %install
-export SOURCE_DATE_EPOCH=1562780815
+export SOURCE_DATE_EPOCH=1563268600
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/package-licenses/mariadb
 cp COPYING %{buildroot}/usr/share/package-licenses/mariadb/COPYING
@@ -335,6 +338,12 @@ chmod -s %{buildroot}/usr/lib64/mysql/plugin/auth_pam_tool_dir/auth_pam_tool
 
 %files bin
 %defattr(-,root,root,-)
+%exclude /usr/bin/haswell/mariadb-client-test-embedded
+%exclude /usr/bin/haswell/mariadb-embedded
+%exclude /usr/bin/haswell/mariadb-test-embedded
+%exclude /usr/bin/haswell/mysql_client_test_embedded
+%exclude /usr/bin/haswell/mysql_embedded
+%exclude /usr/bin/haswell/mysqltest_embedded
 %exclude /usr/bin/mariadb-client-test-embedded
 %exclude /usr/bin/mariadb-embedded
 %exclude /usr/bin/mariadb-test-embedded
@@ -359,16 +368,13 @@ chmod -s %{buildroot}/usr/lib64/mysql/plugin/auth_pam_tool_dir/auth_pam_tool
 /usr/bin/haswell/mariadb-binlog
 /usr/bin/haswell/mariadb-check
 /usr/bin/haswell/mariadb-client-test
-/usr/bin/haswell/mariadb-client-test-embedded
 /usr/bin/haswell/mariadb-dump
-/usr/bin/haswell/mariadb-embedded
 /usr/bin/haswell/mariadb-import
 /usr/bin/haswell/mariadb-ldb
 /usr/bin/haswell/mariadb-plugin
 /usr/bin/haswell/mariadb-show
 /usr/bin/haswell/mariadb-slap
 /usr/bin/haswell/mariadb-test
-/usr/bin/haswell/mariadb-test-embedded
 /usr/bin/haswell/mariadb-tzinfo-to-sql
 /usr/bin/haswell/mariadb-upgrade
 /usr/bin/haswell/mariadb-waitpid
@@ -383,8 +389,6 @@ chmod -s %{buildroot}/usr/lib64/mysql/plugin/auth_pam_tool_dir/auth_pam_tool
 /usr/bin/haswell/myisampack
 /usr/bin/haswell/mysql
 /usr/bin/haswell/mysql_client_test
-/usr/bin/haswell/mysql_client_test_embedded
-/usr/bin/haswell/mysql_embedded
 /usr/bin/haswell/mysql_ldb
 /usr/bin/haswell/mysql_plugin
 /usr/bin/haswell/mysql_tzinfo_to_sql
@@ -400,7 +404,6 @@ chmod -s %{buildroot}/usr/lib64/mysql/plugin/auth_pam_tool_dir/auth_pam_tool
 /usr/bin/haswell/mysqlshow
 /usr/bin/haswell/mysqlslap
 /usr/bin/haswell/mysqltest
-/usr/bin/haswell/mysqltest_embedded
 /usr/bin/haswell/perror
 /usr/bin/haswell/replace
 /usr/bin/haswell/resolve_stack_dump
@@ -996,6 +999,12 @@ chmod -s %{buildroot}/usr/lib64/mysql/plugin/auth_pam_tool_dir/auth_pam_tool
 
 %files extras
 %defattr(-,root,root,-)
+/usr/bin/haswell/mariadb-client-test-embedded
+/usr/bin/haswell/mariadb-embedded
+/usr/bin/haswell/mariadb-test-embedded
+/usr/bin/haswell/mysql_client_test_embedded
+/usr/bin/haswell/mysql_embedded
+/usr/bin/haswell/mysqltest_embedded
 /usr/bin/mariadb-client-test-embedded
 /usr/bin/mariadb-embedded
 /usr/bin/mariadb-test-embedded
