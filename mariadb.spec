@@ -6,13 +6,13 @@
 #
 Name     : mariadb
 Version  : 10.4.6
-Release  : 73
-URL      : https://downloads.mariadb.com/MariaDB/mariadb-10.4.6/source/mariadb-10.4.6.tar.gz
-Source0  : https://downloads.mariadb.com/MariaDB/mariadb-10.4.6/source/mariadb-10.4.6.tar.gz
+Release  : 74
+URL      : http://ftp.hosteurope.de/mirror/archive.mariadb.org/mariadb-10.4.6/source/mariadb-10.4.6.tar.gz
+Source0  : http://ftp.hosteurope.de/mirror/archive.mariadb.org/mariadb-10.4.6/source/mariadb-10.4.6.tar.gz
 Source1  : mariadb-install-db.service
 Source2  : mariadb.service
 Source3  : mariadb.tmpfiles
-Source99 : https://downloads.mariadb.com/MariaDB/mariadb-10.4.6/source/mariadb-10.4.6.tar.gz.asc
+Source4 : http://ftp.hosteurope.de/mirror/archive.mariadb.org/mariadb-10.4.6/source/mariadb-10.4.6.tar.gz.asc
 Summary  : MariaDB Connector/C dynamic library
 Group    : Development/Tools
 License  : AGPL-3.0 Apache-2.0 BSD-3-Clause BSD-3-Clause-Clear CC-BY-4.0 GPL-2.0 GPL-3.0 LGPL-2.1 OpenSSL
@@ -40,8 +40,8 @@ BuildRequires : jemalloc-dev
 BuildRequires : libaio-dev
 BuildRequires : libxml2-dev
 BuildRequires : ncurses-dev
-BuildRequires : openjdk9
-BuildRequires : openjdk9-dev
+BuildRequires : openjdk11
+BuildRequires : openjdk11-dev
 BuildRequires : openssl-dev
 BuildRequires : pcre-dev
 BuildRequires : pkgconfig(liblz4)
@@ -178,7 +178,7 @@ export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C.UTF-8
-export SOURCE_DATE_EPOCH=1563268600
+export SOURCE_DATE_EPOCH=1564087730
 mkdir -p clr-build
 pushd clr-build
 export GCC_IGNORE_WERROR=1
@@ -274,7 +274,7 @@ export no_proxy=localhost,127.0.0.1,0.0.0.0
 cd clr-build/mysql-test && ./mtr --suite=unit --parallel=8 --mem
 
 %install
-export SOURCE_DATE_EPOCH=1563268600
+export SOURCE_DATE_EPOCH=1564087730
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/package-licenses/mariadb
 cp COPYING %{buildroot}/usr/share/package-licenses/mariadb/COPYING
