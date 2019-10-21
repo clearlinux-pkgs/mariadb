@@ -10,3 +10,4 @@ ncurses-dev
 boost-dev
 libxml2-dev
 pcre-dev
+perl(Test::More)
