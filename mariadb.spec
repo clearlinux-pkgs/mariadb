@@ -6,7 +6,7 @@
 #
 Name     : mariadb
 Version  : 10.4.6
-Release  : 75
+Release  : 76
 URL      : http://ftp.hosteurope.de/mirror/archive.mariadb.org/mariadb-10.4.6/source/mariadb-10.4.6.tar.gz
 Source0  : http://ftp.hosteurope.de/mirror/archive.mariadb.org/mariadb-10.4.6/source/mariadb-10.4.6.tar.gz
 Source1  : mariadb-install-db.service
