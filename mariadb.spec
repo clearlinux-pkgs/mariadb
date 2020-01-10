@@ -6,13 +6,13 @@
 #
 Name     : mariadb
 Version  : 10.4.6
-Release  : 77
+Release  : 78
 URL      : http://ftp.hosteurope.de/mirror/archive.mariadb.org/mariadb-10.4.6/source/mariadb-10.4.6.tar.gz
 Source0  : http://ftp.hosteurope.de/mirror/archive.mariadb.org/mariadb-10.4.6/source/mariadb-10.4.6.tar.gz
 Source1  : mariadb-install-db.service
 Source2  : mariadb.service
 Source3  : mariadb.tmpfiles
-Source4 : http://ftp.hosteurope.de/mirror/archive.mariadb.org/mariadb-10.4.6/source/mariadb-10.4.6.tar.gz.asc
+Source4  : http://ftp.hosteurope.de/mirror/archive.mariadb.org/mariadb-10.4.6/source/mariadb-10.4.6.tar.gz.asc
 Summary  : MariaDB Connector/C dynamic library
 Group    : Development/Tools
 License  : AGPL-3.0 Apache-2.0 BSD-3-Clause BSD-3-Clause-Clear CC-BY-4.0 GPL-2.0 GPL-3.0 LGPL-2.1 OpenSSL
@@ -30,7 +30,6 @@ BuildRequires : bison-dev
 BuildRequires : boost-dev
 BuildRequires : buildreq-cmake
 BuildRequires : buildreq-distutils3
-BuildRequires : buildreq-php
 BuildRequires : curl-dev
 BuildRequires : doxygen
 BuildRequires : git
@@ -52,8 +51,8 @@ BuildRequires : pkgconfig(libzstd)
 BuildRequires : zlib-dev
 Patch1: 0001-Change-default-bind-address-really-to-1-loopback-onl.patch
 Patch2: 0002-Support-stateless-operation-by-migrating-to-usr-file.patch
-Patch3: 0004-Solve-build-issue.patch
-Patch4: avxplugin.patch
+Patch3: 0003-Solve-build-issue.patch
+Patch4: 0004-Enable-loading-the-avx-plugin-where-applicable.patch
 
 %description
 *** Description ***
@@ -169,6 +168,7 @@ services components for the mariadb package.
 
 %prep
 %setup -q -n mariadb-10.4.6
+cd %{_builddir}/mariadb-10.4.6
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
@@ -179,7 +179,7 @@ export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C.UTF-8
-export SOURCE_DATE_EPOCH=1571641569
+export SOURCE_DATE_EPOCH=1578684299
 mkdir -p clr-build
 pushd clr-build
 export GCC_IGNORE_WERROR=1
@@ -275,7 +275,7 @@ export no_proxy=localhost,127.0.0.1,0.0.0.0
 cd clr-build/mysql-test && ./mtr --suite=unit --parallel=8 --mem
 
 %install
-export SOURCE_DATE_EPOCH=1571641569
+export SOURCE_DATE_EPOCH=1578684299
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/package-licenses/mariadb
 cp %{_builddir}/mariadb-10.4.6/COPYING %{buildroot}/usr/share/package-licenses/mariadb/793d3cf202835b7b1584a2106d4292656d88e1ae

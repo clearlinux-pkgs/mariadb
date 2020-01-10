@@ -1,16 +1,98 @@
-From 4517bd7b6d5c9d79c27f58a100b8f0030e3195b6 Mon Sep 17 00:00:00 2001
+From 948b0ac55bd772e58edf8322edf726c6f494c41b Mon Sep 17 00:00:00 2001
 From: Michael Ikey Doherty <michael.i.doherty@intel.com>
 Date: Fri, 30 Jan 2015 15:40:18 +0000
-Subject: [PATCH 2/3] Support stateless operation by migrating to /usr
+Subject: [PATCH 2/4] Support stateless operation by migrating to /usr
  filesystem
 
-Signed-off-by: Michael Ikey Doherty <michael.i.doherty@intel.com>
----
- support-files/rpm/my.cnf | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Support includeoptdir, for non fatal inclusion of directories
 
+Make sure to add `includeoptdir` in startupscript.
+---
+ mysys/my_default.c       | 38 ++++++++++++++++++++++++++++++++++++++
+ scripts/mysqld_multi.sh  |  4 ++++
+ support-files/rpm/my.cnf |  3 ++-
+ 3 files changed, 44 insertions(+), 1 deletion(-)
+
+diff --git a/mysys/my_default.c b/mysys/my_default.c
+index deeb9b4a..2f7ab35c 100644
+--- a/mysys/my_default.c
++++ b/mysys/my_default.c
+@@ -757,6 +757,7 @@ static int search_default_file_with_ext(Process_option_func opt_handler,
+   char name[FN_REFLEN + 10], buff[4096], curr_gr[4096], *ptr, *end, **tmp_ext;
+   char *value, option[4096+2], tmp[FN_REFLEN];
+   static const char includedir_keyword[]= "includedir";
++  static const char includeoptdir_keyword[] = "includeoptdir";
+   static const char include_keyword[]= "include";
+   const int max_recursion_level= 10;
+   MYSQL_FILE *fp;
+@@ -869,6 +870,42 @@ static int search_default_file_with_ext(Process_option_func opt_handler,
+ 
+         my_dirend(search_dir);
+       }
++      else if ((!strncmp(ptr, includeoptdir_keyword, sizeof(includeoptdir_keyword) - 1)) &&
++               my_isspace(&my_charset_latin1, ptr[sizeof(includeoptdir_keyword)-1]))
++      {
++
++      if (!(ptr= get_argument(includeoptdir_keyword,
++                                sizeof(includeoptdir_keyword),
++                                ptr, name, line)))
++        goto err;
++
++        if (!(search_dir= my_dir(ptr, MYF(ME_WARNING|MY_WANT_SORT))))
++          goto nonfatal;
++
++        for (i= 0; i < (uint) search_dir->number_of_files; i++)
++        {
++          search_file= search_dir->dir_entry + i;
++          ext= fn_ext2(search_file->name);
++
++          /* check extension */
++          for (tmp_ext= (char**) f_extensions; *tmp_ext; tmp_ext++)
++          {
++            if (!strcmp(ext, *tmp_ext))
++              break;
++          }
++
++          if (*tmp_ext)
++          {
++            fn_format(tmp, search_file->name, ptr, "",
++                      MY_UNPACK_FILENAME | MY_SAFE_PATH);
++
++            search_default_file_with_ext(opt_handler, handler_ctx, "", "", tmp,
++                                         recursion_level + 1);
++          }
++        }
++
++        my_dirend(search_dir);
++      }
+       else if ((!strncmp(ptr, include_keyword, sizeof(include_keyword) - 1)) &&
+                my_isspace(&my_charset_latin1, ptr[sizeof(include_keyword)-1]))
+       {
+@@ -992,6 +1029,7 @@ static int search_default_file_with_ext(Process_option_func opt_handler,
+         goto err;
+     }
+   }
++ nonfatal:
+   mysql_file_fclose(fp, MYF(0));
+   return(0);
+ 
+diff --git a/scripts/mysqld_multi.sh b/scripts/mysqld_multi.sh
+index 7add8541..03776b62 100644
+--- a/scripts/mysqld_multi.sh
++++ b/scripts/mysqld_multi.sh
+@@ -565,6 +565,10 @@ sub find_groups
+       {
+         push @defaults_files, <$1/*.cnf>;
+       }
++      elsif (/^\s*!includeoptdir\s+(\S.*?)\s*$/)
++      {
++        push @defaults_files, <$1/*.cnf>;
++      }
+     }
+ 
+     close CONF;
 diff --git a/support-files/rpm/my.cnf b/support-files/rpm/my.cnf
-index 913b88f..c1112bf 100644
+index 913b88f8..c1112bf9 100644
 --- a/support-files/rpm/my.cnf
 +++ b/support-files/rpm/my.cnf
 @@ -7,5 +7,6 @@
@@ -22,5 +104,5 @@ index 913b88f..c1112bf 100644
  
 +!includeoptdir /etc/mariadb
 -- 
-1.9.1
+2.24.1
 
