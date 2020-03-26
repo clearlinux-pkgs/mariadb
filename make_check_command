@@ -1,1 +1,6 @@
-cd clr-build/mysql-test && ./mtr --suite=unit --parallel=8 --mem
+pushd clr-build/mysql-test
+./mtr --suite=unit --parallel=8 --mem
+./mtr --suite=main --parallel=8 --mem --big-test || :
+./mtr --suite=json --parallel=8 --mem || :
+./mtr --suite=innodb --parallel=8 --mem || :
+popd

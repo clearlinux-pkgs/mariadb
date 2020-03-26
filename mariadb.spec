@@ -6,14 +6,14 @@
 #
 Name     : mariadb
 Version  : 10.4.6
-Release  : 79
+Release  : 80
 URL      : http://ftp.hosteurope.de/mirror/archive.mariadb.org/mariadb-10.4.6/source/mariadb-10.4.6.tar.gz
 Source0  : http://ftp.hosteurope.de/mirror/archive.mariadb.org/mariadb-10.4.6/source/mariadb-10.4.6.tar.gz
 Source1  : mariadb-install-db.service
 Source2  : mariadb.service
 Source3  : mariadb.tmpfiles
 Source4  : http://ftp.hosteurope.de/mirror/archive.mariadb.org/mariadb-10.4.6/source/mariadb-10.4.6.tar.gz.asc
-Summary  : MariaDB Connector/C dynamic library
+Summary  : Fast SQL database server, derived from MySQL
 Group    : Development/Tools
 License  : AGPL-3.0 Apache-2.0 BSD-3-Clause BSD-3-Clause-Clear CC-BY-4.0 GPL-2.0 GPL-3.0 LGPL-2.1 OpenSSL
 Requires: mariadb-bin = %{version}-%{release}
@@ -55,16 +55,12 @@ Patch3: 0003-Solve-build-issue.patch
 Patch4: 0004-Enable-loading-the-avx-plugin-where-applicable.patch
 
 %description
-*** Description ***
-The wolfSSL embedded SSL library (formerly CyaSSL) is a lightweight SSL/TLS
-library written in ANSI C and targeted for embedded, RTOS, and
-resource-constrained environments - primarily because of its small size, speed,
-and feature set.  It is commonly used in standard operating environments as well
-because of its royalty-free pricing and excellent cross platform support.
-wolfSSL supports industry standards up to the current TLS 1.3 and DTLS 1.2
-levels, is up to 20 times smaller than OpenSSL, and offers progressive ciphers
-such as ChaCha20, Curve25519, NTRU, and Blake2b. User benchmarking and feedback
-reports dramatically better performance when using wolfSSL over OpenSSL.
+ZLIB DATA COMPRESSION LIBRARY
+zlib 1.2.11 is a general purpose data compression library.  All the code is
+thread safe.  The data format used by the zlib library is described by RFCs
+(Request for Comments) 1950 to 1952 in the files
+http://tools.ietf.org/html/rfc1950 (zlib format), rfc1951 (deflate format) and
+rfc1952 (gzip format).
 
 %package bin
 Summary: bin components for the mariadb package.
@@ -101,6 +97,7 @@ Requires: mariadb-lib = %{version}-%{release}
 Requires: mariadb-bin = %{version}-%{release}
 Requires: mariadb-data = %{version}-%{release}
 Provides: mariadb-devel = %{version}-%{release}
+Requires: mariadb = %{version}-%{release}
 Requires: mariadb = %{version}-%{release}
 
 %description dev
@@ -179,9 +176,10 @@ export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C.UTF-8
-export SOURCE_DATE_EPOCH=1578684299
+export SOURCE_DATE_EPOCH=1585234149
 mkdir -p clr-build
 pushd clr-build
+# -Werror is for werrorists
 export GCC_IGNORE_WERROR=1
 export CFLAGS="$CFLAGS -O3 -falign-functions=32 -fno-lto -fno-math-errno -fno-semantic-interposition -fno-trapping-math "
 export FCFLAGS="$CFLAGS -O3 -falign-functions=32 -fno-lto -fno-math-errno -fno-semantic-interposition -fno-trapping-math "
@@ -224,6 +222,7 @@ make  %{?_smp_mflags}  VERBOSE=1
 popd
 mkdir -p clr-build-avx2
 pushd clr-build-avx2
+# -Werror is for werrorists
 export GCC_IGNORE_WERROR=1
 export CFLAGS="$CFLAGS -O3 -falign-functions=32 -fno-lto -fno-math-errno -fno-semantic-interposition -fno-trapping-math -march=haswell "
 export FCFLAGS="$CFLAGS -O3 -falign-functions=32 -fno-lto -fno-math-errno -fno-semantic-interposition -fno-trapping-math -march=haswell "
@@ -272,10 +271,15 @@ export LANG=C.UTF-8
 export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
-cd clr-build/mysql-test && ./mtr --suite=unit --parallel=8 --mem
+pushd clr-build/mysql-test
+./mtr --suite=unit --parallel=8 --mem
+./mtr --suite=main --parallel=8 --mem --big-test || :
+./mtr --suite=json --parallel=8 --mem || :
+./mtr --suite=innodb --parallel=8 --mem || :
+popd
 
 %install
-export SOURCE_DATE_EPOCH=1578684299
+export SOURCE_DATE_EPOCH=1585234149
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/package-licenses/mariadb
 cp %{_builddir}/mariadb-10.4.6/COPYING %{buildroot}/usr/share/package-licenses/mariadb/793d3cf202835b7b1584a2106d4292656d88e1ae
