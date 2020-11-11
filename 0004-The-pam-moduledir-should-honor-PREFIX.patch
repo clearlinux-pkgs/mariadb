@@ -1,0 +1,23 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Patrick McCarty <patrick.mccarty@intel.com>
+Date: Wed, 11 Nov 2020 02:00:30 +0000
+Subject: [PATCH] The pam moduledir should honor PREFIX
+
+Signed-off-by: Patrick McCarty <patrick.mccarty@intel.com>
+---
+ cmake/install_layout.cmake | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/cmake/install_layout.cmake b/cmake/install_layout.cmake
+index 9e354996..721f6f1f 100644
+--- a/cmake/install_layout.cmake
++++ b/cmake/install_layout.cmake
+@@ -165,7 +165,7 @@ SET(INSTALL_UNIX_ADDRDIR_RPM            "${INSTALL_MYSQLDATADIR_RPM}/mysql.sock"
+ SET(INSTALL_SYSTEMD_UNITDIR_RPM         "/usr/lib/systemd/system")
+ SET(INSTALL_SYSTEMD_SYSUSERSDIR_RPM     "/usr/lib/sysusers.d")
+ SET(INSTALL_SYSTEMD_TMPFILESDIR_RPM     "/usr/lib/tmpfiles.d")
+-SET(INSTALL_PAMDIR_RPM                  "/${INSTALL_LIBDIR_RPM}/security")
++SET(INSTALL_PAMDIR_RPM                  "${INSTALL_LIBDIR_RPM}/security")
+ SET(INSTALL_PAMDATADIR_RPM              "/etc/security")
+ 
+ #

@@ -1,17 +1,17 @@
-From 21a04837b512196e47a3c9c62e3895d4bcc7ba06 Mon Sep 17 00:00:00 2001
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Arjan van de Ven <arjan@linux.intel.com>
 Date: Fri, 10 Jan 2020 10:48:25 -0800
-Subject: [PATCH 4/4] Enable loading the avx plugin where applicable.
+Subject: [PATCH] Enable loading the avx plugin where applicable.
 
 ---
  sql/sql_plugin.cc | 13 ++++++++++++-
  1 file changed, 12 insertions(+), 1 deletion(-)
 
 diff --git a/sql/sql_plugin.cc b/sql/sql_plugin.cc
-index a6672e2b..67d2c619 100644
+index 981420f0..2c87e1c1 100644
 --- a/sql/sql_plugin.cc
 +++ b/sql/sql_plugin.cc
-@@ -713,6 +713,7 @@ static st_plugin_dl *plugin_dl_add(const LEX_CSTRING *dl, myf MyFlags)
+@@ -714,6 +714,7 @@ static st_plugin_dl *plugin_dl_add(const LEX_CSTRING *dl, myf MyFlags)
  {
  #ifdef HAVE_DLOPEN
    char dlpath[FN_REFLEN];
@@ -19,7 +19,7 @@ index a6672e2b..67d2c619 100644
    size_t plugin_dir_len,i;
    uint dummy_errors;
    struct st_plugin_dl *tmp= 0, plugin_dl;
-@@ -747,8 +748,18 @@ static st_plugin_dl *plugin_dl_add(const LEX_CSTRING *dl, myf MyFlags)
+@@ -748,8 +749,18 @@ static st_plugin_dl *plugin_dl_add(const LEX_CSTRING *dl, myf MyFlags)
    strxnmov(dlpath, sizeof(dlpath) - 1, opt_plugin_dir, "/", dl->str, NullS);
    (void) unpack_filename(dlpath, dlpath);
    plugin_dl.ref_count= 1;
@@ -32,13 +32,10 @@ index a6672e2b..67d2c619 100644
 +
 +  if (!(plugin_dl.handle))
 +	  plugin_dl.handle= dlopen(dlpath, RTLD_NOW);
-+  
++
    /* Open new dll handle */
 -  if (!(plugin_dl.handle= dlopen(dlpath, RTLD_NOW)))
 +  if (!(plugin_dl.handle))
    {
      my_error(ER_CANT_OPEN_LIBRARY, MyFlags, dlpath, errno, my_dlerror(dlpath));
      goto ret;
--- 
-2.24.1
-

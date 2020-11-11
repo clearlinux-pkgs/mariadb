@@ -1,4 +1,4 @@
 0001-Change-default-bind-address-really-to-1-loopback-onl.patch
 0002-Support-stateless-operation-by-migrating-to-usr-file.patch
-0003-Solve-build-issue.patch
-0004-Enable-loading-the-avx-plugin-where-applicable.patch
+0003-Enable-loading-the-avx-plugin-where-applicable.patch
+0004-The-pam-moduledir-should-honor-PREFIX.patch

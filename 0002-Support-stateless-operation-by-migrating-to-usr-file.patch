@@ -1,8 +1,7 @@
-From 948b0ac55bd772e58edf8322edf726c6f494c41b Mon Sep 17 00:00:00 2001
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Michael Ikey Doherty <michael.i.doherty@intel.com>
 Date: Fri, 30 Jan 2015 15:40:18 +0000
-Subject: [PATCH 2/4] Support stateless operation by migrating to /usr
- filesystem
+Subject: [PATCH] Support stateless operation by migrating to /usr filesystem
 
 Support includeoptdir, for non fatal inclusion of directories
 
@@ -14,7 +13,7 @@ Make sure to add `includeoptdir` in startupscript.
  3 files changed, 44 insertions(+), 1 deletion(-)
 
 diff --git a/mysys/my_default.c b/mysys/my_default.c
-index deeb9b4a..2f7ab35c 100644
+index 7c6ef8ff..323035b1 100644
 --- a/mysys/my_default.c
 +++ b/mysys/my_default.c
 @@ -757,6 +757,7 @@ static int search_default_file_with_ext(Process_option_func opt_handler,
@@ -77,10 +76,10 @@ index deeb9b4a..2f7ab35c 100644
    return(0);
  
 diff --git a/scripts/mysqld_multi.sh b/scripts/mysqld_multi.sh
-index 7add8541..03776b62 100644
+index 0b33f617..678ddc8a 100644
 --- a/scripts/mysqld_multi.sh
 +++ b/scripts/mysqld_multi.sh
-@@ -565,6 +565,10 @@ sub find_groups
+@@ -566,6 +566,10 @@ sub find_groups
        {
          push @defaults_files, <$1/*.cnf>;
        }
@@ -92,17 +91,14 @@ index 7add8541..03776b62 100644
  
      close CONF;
 diff --git a/support-files/rpm/my.cnf b/support-files/rpm/my.cnf
-index 913b88f8..c1112bf9 100644
+index 5cda317d..55c06db0 100644
 --- a/support-files/rpm/my.cnf
 +++ b/support-files/rpm/my.cnf
 @@ -7,5 +7,6 @@
  #
- # include all files from the config directory
+ # include *.cnf from the config directory
  #
 -!includedir /etc/my.cnf.d
 +!includedir /usr/share/defaults/mariadb/my.cnf.d
  
 +!includeoptdir /etc/mariadb
--- 
-2.24.1
-
