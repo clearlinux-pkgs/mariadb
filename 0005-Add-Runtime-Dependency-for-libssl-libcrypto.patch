@@ -1,0 +1,24 @@
+From 7119dd0d7df7448e60a9ae947d21c13d92867214 Mon Sep 17 00:00:00 2001
+From: Karthik Prabhu Vinod <karthik.prabhu.vinod@intel.com>
+Date: Thu, 7 Jan 2021 17:18:07 -0800
+Subject: [PATCH] Add Runtime Depedency for libssl & libcrypto
+
+Signed-off-by: Karthik Prabhu Vinod <karthik.prabhu.vinod@intel.com>
+---
+ support-files/mariadb.pc.in | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/support-files/mariadb.pc.in b/support-files/mariadb.pc.in
+index 7d321f28..f3db6710 100644
+--- a/support-files/mariadb.pc.in
++++ b/support-files/mariadb.pc.in
+@@ -19,5 +19,6 @@ Name: @CPACK_PACKAGE_NAME@
+ Description: @CPACK_PACKAGE_DESCRIPTION_SUMMARY@
+ URL: @CPACK_PACKAGE_URL@
+ Version: @VERSION@
++Requires: libssl libcrypto
+ Libs: -L${libdir} @LIBS_FOR_CLIENTS@
+ Cflags: -I${includedir} @CFLAGS_FOR_CLIENTS@
+-- 
+2.30.0
+

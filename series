@@ -2,3 +2,4 @@
 0002-Support-stateless-operation-by-migrating-to-usr-file.patch
 0003-Enable-loading-the-avx-plugin-where-applicable.patch
 0004-The-pam-moduledir-should-honor-PREFIX.patch
+0005-Add-Runtime-Dependency-for-libssl-libcrypto.patch

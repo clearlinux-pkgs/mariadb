@@ -6,7 +6,7 @@
 #
 Name     : mariadb
 Version  : 10.4.16
-Release  : 81
+Release  : 82
 URL      : https://ftp.osuosl.org/pub/mariadb/mariadb-10.4.16/source/mariadb-10.4.16.tar.gz
 Source0  : https://ftp.osuosl.org/pub/mariadb/mariadb-10.4.16/source/mariadb-10.4.16.tar.gz
 Source1  : mariadb-install-db.service
@@ -55,6 +55,7 @@ Patch1: 0001-Change-default-bind-address-really-to-1-loopback-onl.patch
 Patch2: 0002-Support-stateless-operation-by-migrating-to-usr-file.patch
 Patch3: 0003-Enable-loading-the-avx-plugin-where-applicable.patch
 Patch4: 0004-The-pam-moduledir-should-honor-PREFIX.patch
+Patch5: 0005-Add-Runtime-Dependency-for-libssl-libcrypto.patch
 
 %description
 MariaDB is a community-developed, commercially supported fork of the MySQL
@@ -168,13 +169,14 @@ cd %{_builddir}/mariadb-10.4.16
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
+%patch5 -p1
 
 %build
 export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C.UTF-8
-export SOURCE_DATE_EPOCH=1605061540
+export SOURCE_DATE_EPOCH=1610077620
 mkdir -p clr-build
 pushd clr-build
 export GCC_IGNORE_WERROR=1
@@ -279,7 +281,7 @@ pushd clr-build/mysql-test
 popd
 
 %install
-export SOURCE_DATE_EPOCH=1605061540
+export SOURCE_DATE_EPOCH=1610077620
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/package-licenses/mariadb
 cp %{_builddir}/mariadb-10.4.16/COPYING %{buildroot}/usr/share/package-licenses/mariadb/793d3cf202835b7b1584a2106d4292656d88e1ae
