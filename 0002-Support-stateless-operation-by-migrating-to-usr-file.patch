@@ -76,10 +76,10 @@ index 7c6ef8ff..323035b1 100644
    return(0);
  
 diff --git a/scripts/mysqld_multi.sh b/scripts/mysqld_multi.sh
-index 0b33f617..678ddc8a 100644
+index 77ed3621..68e8eb59 100644
 --- a/scripts/mysqld_multi.sh
 +++ b/scripts/mysqld_multi.sh
-@@ -566,6 +566,10 @@ sub find_groups
+@@ -579,6 +579,10 @@ sub find_groups
        {
          push @defaults_files, <$1/*.cnf>;
        }
