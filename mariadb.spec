@@ -6,7 +6,7 @@
 #
 Name     : mariadb
 Version  : 10.4.21
-Release  : 86
+Release  : 87
 URL      : https://ftp.osuosl.org/pub/mariadb/mariadb-10.4.21/source/mariadb-10.4.21.tar.gz
 Source0  : https://ftp.osuosl.org/pub/mariadb/mariadb-10.4.21/source/mariadb-10.4.21.tar.gz
 Source1  : mariadb-install-db.service
@@ -19,6 +19,7 @@ License  : AGPL-3.0 Apache-2.0 BSD-3-Clause BSD-3-Clause-Clear CC-BY-4.0 GPL-2.0
 Requires: mariadb-bin = %{version}-%{release}
 Requires: mariadb-config = %{version}-%{release}
 Requires: mariadb-data = %{version}-%{release}
+Requires: mariadb-filemap = %{version}-%{release}
 Requires: mariadb-lib = %{version}-%{release}
 Requires: mariadb-license = %{version}-%{release}
 Requires: mariadb-man = %{version}-%{release}
@@ -69,6 +70,7 @@ Requires: mariadb-data = %{version}-%{release}
 Requires: mariadb-config = %{version}-%{release}
 Requires: mariadb-license = %{version}-%{release}
 Requires: mariadb-services = %{version}-%{release}
+Requires: mariadb-filemap = %{version}-%{release}
 
 %description bin
 bin components for the mariadb package.
@@ -128,11 +130,20 @@ Group: Default
 extras-clientlib components for the mariadb package.
 
 
+%package filemap
+Summary: filemap components for the mariadb package.
+Group: Default
+
+%description filemap
+filemap components for the mariadb package.
+
+
 %package lib
 Summary: lib components for the mariadb package.
 Group: Libraries
 Requires: mariadb-data = %{version}-%{release}
 Requires: mariadb-license = %{version}-%{release}
+Requires: mariadb-filemap = %{version}-%{release}
 
 %description lib
 lib components for the mariadb package.
@@ -176,7 +187,7 @@ export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C.UTF-8
-export SOURCE_DATE_EPOCH=1632506452
+export SOURCE_DATE_EPOCH=1633801157
 mkdir -p clr-build
 pushd clr-build
 export GCC_IGNORE_WERROR=1
@@ -223,14 +234,14 @@ popd
 mkdir -p clr-build-avx2
 pushd clr-build-avx2
 export GCC_IGNORE_WERROR=1
-export CFLAGS="$CFLAGS -O3 -fno-lto -march=haswell "
-export FCFLAGS="$FFLAGS -O3 -fno-lto -march=haswell "
-export FFLAGS="$FFLAGS -O3 -fno-lto -march=haswell "
-export CXXFLAGS="$CXXFLAGS -O3 -fno-lto -march=haswell "
-export CFLAGS="$CFLAGS -march=haswell -m64"
-export CXXFLAGS="$CXXFLAGS -march=haswell -m64"
-export FFLAGS="$FFLAGS -march=haswell -m64"
-export FCFLAGS="$FCFLAGS -march=haswell -m64"
+export CFLAGS="$CFLAGS -O3 -fno-lto -march=x86-64-v3 -mtune=skylake "
+export FCFLAGS="$FFLAGS -O3 -fno-lto -march=x86-64-v3 -mtune=skylake "
+export FFLAGS="$FFLAGS -O3 -fno-lto -march=x86-64-v3 -mtune=skylake "
+export CXXFLAGS="$CXXFLAGS -O3 -fno-lto -march=x86-64-v3 -mtune=skylake "
+export CFLAGS="$CFLAGS -march=x86-64-v3 -m64"
+export CXXFLAGS="$CXXFLAGS -march=x86-64-v3 -m64"
+export FFLAGS="$FFLAGS -march=x86-64-v3 -m64"
+export FCFLAGS="$FCFLAGS -march=x86-64-v3 -m64"
 %cmake .. -DBUILD_CONFIG=mysql_release \
 -DCMAKE_BUILD_TYPE=RelWithDebInfo \
 -DCMAKE_C_FLAGS="-fPIC $CFLAGS -fno-strict-aliasing -DBIG_JOINS=1 -fomit-frame-pointer" \
@@ -281,7 +292,7 @@ pushd clr-build/mysql-test
 popd
 
 %install
-export SOURCE_DATE_EPOCH=1632506452
+export SOURCE_DATE_EPOCH=1633801157
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/package-licenses/mariadb
 cp %{_builddir}/mariadb-10.4.21/COPYING %{buildroot}/usr/share/package-licenses/mariadb/793d3cf202835b7b1584a2106d4292656d88e1ae
@@ -318,7 +329,8 @@ cp %{_builddir}/mariadb-10.4.21/wsrep-lib/COPYING %{buildroot}/usr/share/package
 cp %{_builddir}/mariadb-10.4.21/wsrep-lib/LICENSE %{buildroot}/usr/share/package-licenses/mariadb/4cc77b90af91e615a64ae04893fdffa7939db84c
 cp %{_builddir}/mariadb-10.4.21/wsrep-lib/wsrep-API/v26/COPYING %{buildroot}/usr/share/package-licenses/mariadb/4cc77b90af91e615a64ae04893fdffa7939db84c
 pushd clr-build-avx2
-%make_install_avx2  || :
+%make_install_v3  || :
+/usr/bin/elf-move.py avx2 %{buildroot}-v3 %{buildroot}/usr/share/clear/optimized-elf/ %{buildroot}/usr/share/clear/filemap/filemap-%{name}
 popd
 pushd clr-build
 %make_install
@@ -348,61 +360,6 @@ chmod -s %{buildroot}/usr/lib64/mysql/plugin/auth_pam_tool_dir/auth_pam_tool
 /usr/bin/aria_ftdump
 /usr/bin/aria_pack
 /usr/bin/aria_read_log
-/usr/bin/haswell/aria_chk
-/usr/bin/haswell/aria_dump_log
-/usr/bin/haswell/aria_ftdump
-/usr/bin/haswell/aria_pack
-/usr/bin/haswell/aria_read_log
-/usr/bin/haswell/innochecksum
-/usr/bin/haswell/mariabackup
-/usr/bin/haswell/mariadb
-/usr/bin/haswell/mariadb-admin
-/usr/bin/haswell/mariadb-backup
-/usr/bin/haswell/mariadb-binlog
-/usr/bin/haswell/mariadb-check
-/usr/bin/haswell/mariadb-client-test
-/usr/bin/haswell/mariadb-dump
-/usr/bin/haswell/mariadb-import
-/usr/bin/haswell/mariadb-ldb
-/usr/bin/haswell/mariadb-plugin
-/usr/bin/haswell/mariadb-show
-/usr/bin/haswell/mariadb-slap
-/usr/bin/haswell/mariadb-test
-/usr/bin/haswell/mariadb-tzinfo-to-sql
-/usr/bin/haswell/mariadb-upgrade
-/usr/bin/haswell/mariadb-waitpid
-/usr/bin/haswell/mariadb_config
-/usr/bin/haswell/mariadbd
-/usr/bin/haswell/mariadbd-safe-helper
-/usr/bin/haswell/mbstream
-/usr/bin/haswell/my_print_defaults
-/usr/bin/haswell/myisam_ftdump
-/usr/bin/haswell/myisamchk
-/usr/bin/haswell/myisamlog
-/usr/bin/haswell/myisampack
-/usr/bin/haswell/mysql
-/usr/bin/haswell/mysql_client_test
-/usr/bin/haswell/mysql_ldb
-/usr/bin/haswell/mysql_plugin
-/usr/bin/haswell/mysql_tzinfo_to_sql
-/usr/bin/haswell/mysql_upgrade
-/usr/bin/haswell/mysql_waitpid
-/usr/bin/haswell/mysqladmin
-/usr/bin/haswell/mysqlbinlog
-/usr/bin/haswell/mysqlcheck
-/usr/bin/haswell/mysqld
-/usr/bin/haswell/mysqld_safe_helper
-/usr/bin/haswell/mysqldump
-/usr/bin/haswell/mysqlimport
-/usr/bin/haswell/mysqlshow
-/usr/bin/haswell/mysqlslap
-/usr/bin/haswell/mysqltest
-/usr/bin/haswell/perror
-/usr/bin/haswell/replace
-/usr/bin/haswell/resolve_stack_dump
-/usr/bin/haswell/resolveip
-/usr/bin/haswell/sst_dump
-/usr/bin/haswell/test-connect-t
 /usr/bin/innochecksum
 /usr/bin/mariabackup
 /usr/bin/mariadb
@@ -485,6 +442,7 @@ chmod -s %{buildroot}/usr/lib64/mysql/plugin/auth_pam_tool_dir/auth_pam_tool
 /usr/bin/wsrep_sst_mysqldump
 /usr/bin/wsrep_sst_rsync
 /usr/bin/wsrep_sst_rsync_wan
+/usr/share/clear/optimized-elf/bin*
 
 %files config
 %defattr(-,root,root,-)
@@ -996,12 +954,6 @@ chmod -s %{buildroot}/usr/lib64/mysql/plugin/auth_pam_tool_dir/auth_pam_tool
 
 %files extras
 %defattr(-,root,root,-)
-/usr/bin/haswell/mariadb-client-test-embedded
-/usr/bin/haswell/mariadb-embedded
-/usr/bin/haswell/mariadb-test-embedded
-/usr/bin/haswell/mysql_client_test_embedded
-/usr/bin/haswell/mysql_embedded
-/usr/bin/haswell/mysqltest_embedded
 /usr/bin/mariadb-client-test-embedded
 /usr/bin/mariadb-embedded
 /usr/bin/mariadb-test-embedded
@@ -1011,17 +963,14 @@ chmod -s %{buildroot}/usr/lib64/mysql/plugin/auth_pam_tool_dir/auth_pam_tool
 
 %files extras-clientlib
 %defattr(-,root,root,-)
-/usr/lib64/haswell/libmariadb.so.3
 /usr/lib64/libmariadb.so.3
+
+%files filemap
+%defattr(-,root,root,-)
+/usr/share/clear/filemap/filemap-mariadb
 
 %files lib
 %defattr(-,root,root,-)
-/usr/lib64/haswell/libmariadb.so
-/usr/lib64/haswell/libmariadbd.so
-/usr/lib64/haswell/libmariadbd.so.19
-/usr/lib64/haswell/libmysqlclient.so
-/usr/lib64/haswell/libmysqlclient_r.so
-/usr/lib64/haswell/libmysqld.so
 /usr/lib64/libmariadb.so
 /usr/lib64/libmariadbd.so
 /usr/lib64/libmariadbd.so.19
@@ -1030,43 +979,29 @@ chmod -s %{buildroot}/usr/lib64/mysql/plugin/auth_pam_tool_dir/auth_pam_tool
 /usr/lib64/libmysqld.so
 /usr/lib64/mysql/plugin/adt_null.so
 /usr/lib64/mysql/plugin/auth_0x0100.so
-/usr/lib64/mysql/plugin/auth_0x0100.so.avx2
 /usr/lib64/mysql/plugin/auth_ed25519.so
-/usr/lib64/mysql/plugin/auth_ed25519.so.avx2
 /usr/lib64/mysql/plugin/auth_pam.so
 /usr/lib64/mysql/plugin/auth_pam_v1.so
 /usr/lib64/mysql/plugin/auth_test_plugin.so
 /usr/lib64/mysql/plugin/caching_sha2_password.so
 /usr/lib64/mysql/plugin/client_ed25519.so
-/usr/lib64/mysql/plugin/client_ed25519.so.avx2
 /usr/lib64/mysql/plugin/debug_key_management.so
 /usr/lib64/mysql/plugin/dialog.so
 /usr/lib64/mysql/plugin/dialog_examples.so
 /usr/lib64/mysql/plugin/disks.so
 /usr/lib64/mysql/plugin/example_key_management.so
-/usr/lib64/mysql/plugin/example_key_management.so.avx2
 /usr/lib64/mysql/plugin/file_key_management.so
 /usr/lib64/mysql/plugin/ha_archive.so
-/usr/lib64/mysql/plugin/ha_archive.so.avx2
 /usr/lib64/mysql/plugin/ha_blackhole.so
-/usr/lib64/mysql/plugin/ha_blackhole.so.avx2
 /usr/lib64/mysql/plugin/ha_connect.so
-/usr/lib64/mysql/plugin/ha_connect.so.avx2
 /usr/lib64/mysql/plugin/ha_example.so
 /usr/lib64/mysql/plugin/ha_federated.so
-/usr/lib64/mysql/plugin/ha_federated.so.avx2
 /usr/lib64/mysql/plugin/ha_federatedx.so
-/usr/lib64/mysql/plugin/ha_federatedx.so.avx2
 /usr/lib64/mysql/plugin/ha_rocksdb.so
-/usr/lib64/mysql/plugin/ha_rocksdb.so.avx2
 /usr/lib64/mysql/plugin/ha_sphinx.so
-/usr/lib64/mysql/plugin/ha_sphinx.so.avx2
 /usr/lib64/mysql/plugin/ha_spider.so
-/usr/lib64/mysql/plugin/ha_spider.so.avx2
 /usr/lib64/mysql/plugin/ha_test_sql_discovery.so
-/usr/lib64/mysql/plugin/ha_test_sql_discovery.so.avx2
 /usr/lib64/mysql/plugin/handlersocket.so
-/usr/lib64/mysql/plugin/handlersocket.so.avx2
 /usr/lib64/mysql/plugin/libdaemon_example.so
 /usr/lib64/mysql/plugin/locales.so
 /usr/lib64/mysql/plugin/metadata_lock_info.so
@@ -1078,13 +1013,17 @@ chmod -s %{buildroot}/usr/lib64/mysql/plugin/auth_pam_tool_dir/auth_pam_tool
 /usr/lib64/mysql/plugin/query_cache_info.so
 /usr/lib64/mysql/plugin/query_response_time.so
 /usr/lib64/mysql/plugin/server_audit.so
-/usr/lib64/mysql/plugin/server_audit.so.avx2
 /usr/lib64/mysql/plugin/sha256_password.so
 /usr/lib64/mysql/plugin/simple_password_check.so
 /usr/lib64/mysql/plugin/sql_errlog.so
 /usr/lib64/mysql/plugin/test_versioning.so
 /usr/lib64/mysql/plugin/wsrep_info.so
 /usr/lib64/security/pam_user_map.so
+/usr/share/clear/optimized-elf/3a89dc46d74fb5d96e1d679d262b072ca0793e54f1d6b5d767571198164da414
+/usr/share/clear/optimized-elf/8e6f2d6735f405a9ecbdb9e9f22e238168e229c157e0ff4c78219e0564cbf7dd
+/usr/share/clear/optimized-elf/ad1dd6ddc7ac24d47baf704956e918cc684463e214dce8847daf8b1bb63d2df5
+/usr/share/clear/optimized-elf/d400f7bdab9571dfce6c201daa2980bf07d52fc748a485ebe23b97efc2314602
+/usr/share/clear/optimized-elf/lib*
 
 %files license
 %defattr(0644,root,root,0755)
