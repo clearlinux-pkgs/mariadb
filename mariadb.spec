@@ -6,7 +6,7 @@
 #
 Name     : mariadb
 Version  : 10.4.21
-Release  : 87
+Release  : 88
 URL      : https://ftp.osuosl.org/pub/mariadb/mariadb-10.4.21/source/mariadb-10.4.21.tar.gz
 Source0  : https://ftp.osuosl.org/pub/mariadb/mariadb-10.4.21/source/mariadb-10.4.21.tar.gz
 Source1  : mariadb-install-db.service
@@ -187,7 +187,7 @@ export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C.UTF-8
-export SOURCE_DATE_EPOCH=1633801157
+export SOURCE_DATE_EPOCH=1633825132
 mkdir -p clr-build
 pushd clr-build
 export GCC_IGNORE_WERROR=1
@@ -292,7 +292,7 @@ pushd clr-build/mysql-test
 popd
 
 %install
-export SOURCE_DATE_EPOCH=1633801157
+export SOURCE_DATE_EPOCH=1633825132
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/package-licenses/mariadb
 cp %{_builddir}/mariadb-10.4.21/COPYING %{buildroot}/usr/share/package-licenses/mariadb/793d3cf202835b7b1584a2106d4292656d88e1ae
