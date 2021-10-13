@@ -6,7 +6,7 @@
 #
 Name     : mariadb
 Version  : 10.4.21
-Release  : 88
+Release  : 89
 URL      : https://ftp.osuosl.org/pub/mariadb/mariadb-10.4.21/source/mariadb-10.4.21.tar.gz
 Source0  : https://ftp.osuosl.org/pub/mariadb/mariadb-10.4.21/source/mariadb-10.4.21.tar.gz
 Source1  : mariadb-install-db.service
@@ -187,7 +187,7 @@ export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C.UTF-8
-export SOURCE_DATE_EPOCH=1633825132
+export SOURCE_DATE_EPOCH=1634086654
 mkdir -p clr-build
 pushd clr-build
 export GCC_IGNORE_WERROR=1
@@ -292,7 +292,7 @@ pushd clr-build/mysql-test
 popd
 
 %install
-export SOURCE_DATE_EPOCH=1633825132
+export SOURCE_DATE_EPOCH=1634086654
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/package-licenses/mariadb
 cp %{_builddir}/mariadb-10.4.21/COPYING %{buildroot}/usr/share/package-licenses/mariadb/793d3cf202835b7b1584a2106d4292656d88e1ae
@@ -330,7 +330,6 @@ cp %{_builddir}/mariadb-10.4.21/wsrep-lib/LICENSE %{buildroot}/usr/share/package
 cp %{_builddir}/mariadb-10.4.21/wsrep-lib/wsrep-API/v26/COPYING %{buildroot}/usr/share/package-licenses/mariadb/4cc77b90af91e615a64ae04893fdffa7939db84c
 pushd clr-build-avx2
 %make_install_v3  || :
-/usr/bin/elf-move.py avx2 %{buildroot}-v3 %{buildroot}/usr/share/clear/optimized-elf/ %{buildroot}/usr/share/clear/filemap/filemap-%{name}
 popd
 pushd clr-build
 %make_install
@@ -341,12 +340,15 @@ install -m 0644 %{SOURCE2} %{buildroot}/usr/lib/systemd/system/mariadb.service
 mkdir -p %{buildroot}/usr/lib/tmpfiles.d
 install -m 0644 %{SOURCE3} %{buildroot}/usr/lib/tmpfiles.d/mariadb.conf
 ## install_append content
-rm -rf %{buildroot}/usr/share/mysql-test
+rm -rf %{buildroot}*/usr/share/mysql-test
 mkdir -p %{buildroot}/usr/share/mariadb
+mkdir -p %{buildroot}-v3/usr/share/mariadb
 mv %{buildroot}/usr/bin/wsrep_sst_common %{buildroot}/usr/share/mariadb/
+mv %{buildroot}-v3/usr/bin/wsrep_sst_common %{buildroot}-v3/usr/share/mariadb/
 ln -s ../share/mariadb/wsrep_sst_common %{buildroot}/usr/bin/wsrep_sst_common
-chmod -s %{buildroot}/usr/lib64/mysql/plugin/auth_pam_tool_dir/auth_pam_tool
+chmod -s %{buildroot}*/usr/lib64/mysql/plugin/auth_pam_tool_dir/auth_pam_tool
 ## install_append end
+/usr/bin/elf-move.py avx2 %{buildroot}-v3 %{buildroot}/usr/share/clear/optimized-elf/ %{buildroot}/usr/share/clear/filemap/filemap-%{name}
 
 %files
 %defattr(-,root,root,-)
@@ -1019,11 +1021,8 @@ chmod -s %{buildroot}/usr/lib64/mysql/plugin/auth_pam_tool_dir/auth_pam_tool
 /usr/lib64/mysql/plugin/test_versioning.so
 /usr/lib64/mysql/plugin/wsrep_info.so
 /usr/lib64/security/pam_user_map.so
-/usr/share/clear/optimized-elf/3a89dc46d74fb5d96e1d679d262b072ca0793e54f1d6b5d767571198164da414
-/usr/share/clear/optimized-elf/8e6f2d6735f405a9ecbdb9e9f22e238168e229c157e0ff4c78219e0564cbf7dd
-/usr/share/clear/optimized-elf/ad1dd6ddc7ac24d47baf704956e918cc684463e214dce8847daf8b1bb63d2df5
-/usr/share/clear/optimized-elf/d400f7bdab9571dfce6c201daa2980bf07d52fc748a485ebe23b97efc2314602
 /usr/share/clear/optimized-elf/lib*
+/usr/share/clear/optimized-elf/other*
 
 %files license
 %defattr(0644,root,root,0755)

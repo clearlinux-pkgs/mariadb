@@ -1,5 +1,7 @@
-rm -rf %{buildroot}/usr/share/mysql-test
+rm -rf %{buildroot}*/usr/share/mysql-test
 mkdir -p %{buildroot}/usr/share/mariadb
+mkdir -p %{buildroot}-v3/usr/share/mariadb
 mv %{buildroot}/usr/bin/wsrep_sst_common %{buildroot}/usr/share/mariadb/
+mv %{buildroot}-v3/usr/bin/wsrep_sst_common %{buildroot}-v3/usr/share/mariadb/
 ln -s ../share/mariadb/wsrep_sst_common %{buildroot}/usr/bin/wsrep_sst_common
-chmod -s %{buildroot}/usr/lib64/mysql/plugin/auth_pam_tool_dir/auth_pam_tool
+chmod -s %{buildroot}*/usr/lib64/mysql/plugin/auth_pam_tool_dir/auth_pam_tool
