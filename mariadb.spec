@@ -6,7 +6,7 @@
 #
 Name     : mariadb
 Version  : 10.6.5
-Release  : 91
+Release  : 92
 URL      : https://ftp.osuosl.org/pub/mariadb/mariadb-10.6.5/source/mariadb-10.6.5.tar.gz
 Source0  : https://ftp.osuosl.org/pub/mariadb/mariadb-10.6.5/source/mariadb-10.6.5.tar.gz
 Source1  : mariadb-install-db.service
@@ -194,7 +194,7 @@ export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C.UTF-8
-export SOURCE_DATE_EPOCH=1642697237
+export SOURCE_DATE_EPOCH=1642722670
 mkdir -p clr-build
 pushd clr-build
 export GCC_IGNORE_WERROR=1
@@ -303,7 +303,7 @@ pushd clr-build/mysql-test
 popd
 
 %install
-export SOURCE_DATE_EPOCH=1642697237
+export SOURCE_DATE_EPOCH=1642722670
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/package-licenses/mariadb
 cp %{_builddir}/mariadb-10.6.5/COPYING %{buildroot}/usr/share/package-licenses/mariadb/793d3cf202835b7b1584a2106d4292656d88e1ae
@@ -346,6 +346,8 @@ install -m 0644 %{SOURCE1} %{buildroot}/usr/lib/systemd/system/mariadb-install-d
 install -m 0644 %{SOURCE2} %{buildroot}/usr/lib/systemd/system/mariadb.service
 mkdir -p %{buildroot}/usr/lib/tmpfiles.d
 install -m 0644 %{SOURCE3} %{buildroot}/usr/lib/tmpfiles.d/mariadb.conf
+## Remove excluded files
+rm -f %{buildroot}*/usr/bin/rcmysql
 ## install_append content
 rm -rf %{buildroot}*/usr/share/mysql-test
 mkdir -p %{buildroot}/usr/share/mariadb
@@ -446,7 +448,6 @@ chmod -s %{buildroot}*/usr/lib64/mysql/plugin/auth_pam_tool_dir/auth_pam_tool
 /usr/bin/mysqltest
 /usr/bin/mytop
 /usr/bin/perror
-/usr/bin/rcmysql
 /usr/bin/replace
 /usr/bin/resolve_stack_dump
 /usr/bin/resolveip
