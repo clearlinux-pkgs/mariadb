@@ -6,7 +6,7 @@
 #
 Name     : mariadb
 Version  : 10.4.21
-Release  : 89
+Release  : 90
 URL      : https://ftp.osuosl.org/pub/mariadb/mariadb-10.4.21/source/mariadb-10.4.21.tar.gz
 Source0  : https://ftp.osuosl.org/pub/mariadb/mariadb-10.4.21/source/mariadb-10.4.21.tar.gz
 Source1  : mariadb-install-db.service
