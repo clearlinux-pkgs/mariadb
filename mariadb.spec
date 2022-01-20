@@ -5,17 +5,17 @@
 # Source0 file verified with key 0xCBCB082A1BB943DB (package-signing-key@mariadb.org)
 #
 Name     : mariadb
-Version  : 10.4.21
-Release  : 90
-URL      : https://ftp.osuosl.org/pub/mariadb/mariadb-10.4.21/source/mariadb-10.4.21.tar.gz
-Source0  : https://ftp.osuosl.org/pub/mariadb/mariadb-10.4.21/source/mariadb-10.4.21.tar.gz
+Version  : 10.6.5
+Release  : 91
+URL      : https://ftp.osuosl.org/pub/mariadb/mariadb-10.6.5/source/mariadb-10.6.5.tar.gz
+Source0  : https://ftp.osuosl.org/pub/mariadb/mariadb-10.6.5/source/mariadb-10.6.5.tar.gz
 Source1  : mariadb-install-db.service
 Source2  : mariadb.service
 Source3  : mariadb.tmpfiles
-Source4  : https://ftp.osuosl.org/pub/mariadb/mariadb-10.4.21/source/mariadb-10.4.21.tar.gz.asc
+Source4  : https://ftp.osuosl.org/pub/mariadb/mariadb-10.6.5/source/mariadb-10.6.5.tar.gz.asc
 Summary  : Open source relational database
 Group    : Development/Tools
-License  : AGPL-3.0 Apache-2.0 BSD-3-Clause BSD-3-Clause-Clear CC-BY-4.0 GPL-2.0 GPL-3.0 LGPL-2.1 OpenSSL
+License  : Apache-2.0 BSD-3-Clause CC-BY-4.0 GPL-2.0 LGPL-2.1 OpenSSL
 Requires: mariadb-bin = %{version}-%{release}
 Requires: mariadb-config = %{version}-%{release}
 Requires: mariadb-data = %{version}-%{release}
@@ -34,29 +34,37 @@ BuildRequires : buildreq-distutils3
 BuildRequires : bzip2-dev
 BuildRequires : curl-dev
 BuildRequires : doxygen
+BuildRequires : flex
 BuildRequires : gflags-dev
 BuildRequires : git
 BuildRequires : glibc-dev
 BuildRequires : gnutls-dev
+BuildRequires : googletest-dev
 BuildRequires : jemalloc-dev
 BuildRequires : libaio-dev
+BuildRequires : liburing-dev
 BuildRequires : libxml2-dev
+BuildRequires : lz4-dev
 BuildRequires : ncurses-dev
+BuildRequires : numactl-dev
 BuildRequires : openjdk11
 BuildRequires : openjdk11-dev
 BuildRequires : openssl-dev
 BuildRequires : pcre-dev
+BuildRequires : pcre2-dev
 BuildRequires : perl(Test::More)
+BuildRequires : pkgconfig(libcurl)
 BuildRequires : pkgconfig(liblz4)
-BuildRequires : pkgconfig(libpcre)
 BuildRequires : pkgconfig(libssl)
 BuildRequires : pkgconfig(libzstd)
+BuildRequires : snappy-dev
+BuildRequires : systemd-dev
+BuildRequires : xz-dev
 BuildRequires : zlib-dev
 Patch1: 0001-Change-default-bind-address-really-to-1-loopback-onl.patch
 Patch2: 0002-Support-stateless-operation-by-migrating-to-usr-file.patch
-Patch3: 0003-Enable-loading-the-avx-plugin-where-applicable.patch
-Patch4: 0004-The-pam-moduledir-should-honor-PREFIX.patch
-Patch5: 0005-Add-Runtime-Dependency-for-libssl-libcrypto.patch
+Patch3: 0004-The-pam-moduledir-should-honor-PREFIX.patch
+Patch4: 0005-Add-Runtime-Dependency-for-libssl-libcrypto.patch
 
 %description
 MariaDB is a community-developed, commercially supported fork of the MySQL
@@ -174,20 +182,19 @@ services components for the mariadb package.
 
 
 %prep
-%setup -q -n mariadb-10.4.21
-cd %{_builddir}/mariadb-10.4.21
+%setup -q -n mariadb-10.6.5
+cd %{_builddir}/mariadb-10.6.5
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
-%patch5 -p1
 
 %build
 export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C.UTF-8
-export SOURCE_DATE_EPOCH=1634086654
+export SOURCE_DATE_EPOCH=1642697237
 mkdir -p clr-build
 pushd clr-build
 export GCC_IGNORE_WERROR=1
@@ -228,20 +235,22 @@ export CXXFLAGS="$CXXFLAGS -fno-lto "
 -DWITH_ZLIB=system \
 -DWITHOUT_MROONGA=True \
 -DWITHOUT_TOKUDB=True \
--DWSREP_LIB_WITH_COVERAGE=OFF
+-DWSREP_LIB_WITH_COVERAGE=OFF \
+-DWITH_PCRE=system \
+-DWITH_NUMA=On
 make  %{?_smp_mflags}
 popd
 mkdir -p clr-build-avx2
 pushd clr-build-avx2
 export GCC_IGNORE_WERROR=1
-export CFLAGS="$CFLAGS -O3 -fno-lto -march=x86-64-v3 -mtune=skylake "
-export FCFLAGS="$FFLAGS -O3 -fno-lto -march=x86-64-v3 -mtune=skylake "
-export FFLAGS="$FFLAGS -O3 -fno-lto -march=x86-64-v3 -mtune=skylake "
-export CXXFLAGS="$CXXFLAGS -O3 -fno-lto -march=x86-64-v3 -mtune=skylake "
-export CFLAGS="$CFLAGS -march=x86-64-v3 -m64"
-export CXXFLAGS="$CXXFLAGS -march=x86-64-v3 -m64"
-export FFLAGS="$FFLAGS -march=x86-64-v3 -m64"
-export FCFLAGS="$FCFLAGS -march=x86-64-v3 -m64"
+export CFLAGS="$CFLAGS -O3 -Wl,-z,x86-64-v3 -fno-lto -march=x86-64-v3 -mtune=skylake "
+export FCFLAGS="$FFLAGS -O3 -Wl,-z,x86-64-v3 -fno-lto -march=x86-64-v3 -mtune=skylake "
+export FFLAGS="$FFLAGS -O3 -Wl,-z,x86-64-v3 -fno-lto -march=x86-64-v3 -mtune=skylake "
+export CXXFLAGS="$CXXFLAGS -O3 -Wl,-z,x86-64-v3 -fno-lto -march=x86-64-v3 -mtune=skylake "
+export CFLAGS="$CFLAGS -march=x86-64-v3 -m64 -Wl,-z,x86-64-v3"
+export CXXFLAGS="$CXXFLAGS -march=x86-64-v3 -m64 -Wl,-z,x86-64-v3"
+export FFLAGS="$FFLAGS -march=x86-64-v3 -m64 -Wl,-z,x86-64-v3"
+export FCFLAGS="$FCFLAGS -march=x86-64-v3 -m64 -Wl,-z,x86-64-v3"
 %cmake .. -DBUILD_CONFIG=mysql_release \
 -DCMAKE_BUILD_TYPE=RelWithDebInfo \
 -DCMAKE_C_FLAGS="-fPIC $CFLAGS -fno-strict-aliasing -DBIG_JOINS=1 -fomit-frame-pointer" \
@@ -275,7 +284,9 @@ export FCFLAGS="$FCFLAGS -march=x86-64-v3 -m64"
 -DWITH_ZLIB=system \
 -DWITHOUT_MROONGA=True \
 -DWITHOUT_TOKUDB=True \
--DWSREP_LIB_WITH_COVERAGE=OFF
+-DWSREP_LIB_WITH_COVERAGE=OFF \
+-DWITH_PCRE=system \
+-DWITH_NUMA=On
 make  %{?_smp_mflags}
 popd
 
@@ -292,42 +303,38 @@ pushd clr-build/mysql-test
 popd
 
 %install
-export SOURCE_DATE_EPOCH=1634086654
+export SOURCE_DATE_EPOCH=1642697237
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/package-licenses/mariadb
-cp %{_builddir}/mariadb-10.4.21/COPYING %{buildroot}/usr/share/package-licenses/mariadb/793d3cf202835b7b1584a2106d4292656d88e1ae
-cp %{_builddir}/mariadb-10.4.21/extra/readline/COPYING %{buildroot}/usr/share/package-licenses/mariadb/4231152540c27f86b02f96e73605e1ff18d2ee95
-cp %{_builddir}/mariadb-10.4.21/extra/wolfssl/wolfssl/COPYING %{buildroot}/usr/share/package-licenses/mariadb/4cc77b90af91e615a64ae04893fdffa7939db84c
-cp %{_builddir}/mariadb-10.4.21/libmariadb/COPYING.LIB %{buildroot}/usr/share/package-licenses/mariadb/01a6b4bf79aca9b556822601186afab86e8c4fbf
-cp %{_builddir}/mariadb-10.4.21/libmariadb/cmake/COPYING-CMAKE-SCRIPTS %{buildroot}/usr/share/package-licenses/mariadb/ff3ed70db4739b3c6747c7f624fe2bad70802987
-cp %{_builddir}/mariadb-10.4.21/pcre/LICENCE %{buildroot}/usr/share/package-licenses/mariadb/936db4f914d8b9a516ac93a3bf7856c8bfeb6855
-cp %{_builddir}/mariadb-10.4.21/pcre/cmake/COPYING-CMAKE-SCRIPTS %{buildroot}/usr/share/package-licenses/mariadb/ff3ed70db4739b3c6747c7f624fe2bad70802987
-cp %{_builddir}/mariadb-10.4.21/plugin/handler_socket/handlersocket/COPYRIGHT.txt %{buildroot}/usr/share/package-licenses/mariadb/3914c2c16582bb3e404a22557a1f6b3c73db23a8
-cp %{_builddir}/mariadb-10.4.21/plugin/handler_socket/libhsclient/COPYRIGHT.txt %{buildroot}/usr/share/package-licenses/mariadb/3914c2c16582bb3e404a22557a1f6b3c73db23a8
-cp %{_builddir}/mariadb-10.4.21/plugin/handler_socket/perl-Net-HandlerSocket/COPYRIGHT.txt %{buildroot}/usr/share/package-licenses/mariadb/3914c2c16582bb3e404a22557a1f6b3c73db23a8
-cp %{_builddir}/mariadb-10.4.21/plugin/server_audit/COPYING %{buildroot}/usr/share/package-licenses/mariadb/793d3cf202835b7b1584a2106d4292656d88e1ae
-cp %{_builddir}/mariadb-10.4.21/storage/innobase/COPYING.Google %{buildroot}/usr/share/package-licenses/mariadb/21c6e1c3c9ef7e68ec6cf63b3efda490e81ba26a
-cp %{_builddir}/mariadb-10.4.21/storage/innobase/COPYING.Percona %{buildroot}/usr/share/package-licenses/mariadb/8065fd50693d562d8f14d53ca84db13df5280c47
-cp %{_builddir}/mariadb-10.4.21/storage/mroonga/COPYING %{buildroot}/usr/share/package-licenses/mariadb/d4c4fe8d1effe5471779e799caaa09cbb54e5b3f
-cp %{_builddir}/mariadb-10.4.21/storage/mroonga/vendor/groonga/COPYING %{buildroot}/usr/share/package-licenses/mariadb/5db84f12bde6c5e77125936e1470be0f400ece5f
-cp %{_builddir}/mariadb-10.4.21/storage/mroonga/vendor/groonga/vendor/plugins/groonga-normalizer-mysql/packages/debian/copyright %{buildroot}/usr/share/package-licenses/mariadb/60d021148ab131e6640e0edd7801f12f02a384e1
-cp %{_builddir}/mariadb-10.4.21/storage/rocksdb/rocksdb/COPYING %{buildroot}/usr/share/package-licenses/mariadb/4cc77b90af91e615a64ae04893fdffa7939db84c
-cp %{_builddir}/mariadb-10.4.21/storage/rocksdb/rocksdb/LICENSE.Apache %{buildroot}/usr/share/package-licenses/mariadb/2b8b815229aa8a61e483fb4ba0588b8b6c491890
-cp %{_builddir}/mariadb-10.4.21/storage/rocksdb/rocksdb/LICENSE.leveldb %{buildroot}/usr/share/package-licenses/mariadb/59f297dcc2fbc8f9f3a966fd5290d72837fd6455
-cp %{_builddir}/mariadb-10.4.21/storage/rocksdb/rocksdb/docs/LICENSE-DOCUMENTATION %{buildroot}/usr/share/package-licenses/mariadb/420cc096d9ce8dfabee4082196acb0383377f202
-cp %{_builddir}/mariadb-10.4.21/storage/tokudb/PerconaFT/COPYING.AGPLv3 %{buildroot}/usr/share/package-licenses/mariadb/78e50e186b04c8fe1defaa098f1c192181b3d837
-cp %{_builddir}/mariadb-10.4.21/storage/tokudb/PerconaFT/COPYING.APACHEv2 %{buildroot}/usr/share/package-licenses/mariadb/77c56994eb0a7752cf9b508dc4682ddce91828bf
-cp %{_builddir}/mariadb-10.4.21/storage/tokudb/PerconaFT/COPYING.GPLv2 %{buildroot}/usr/share/package-licenses/mariadb/793d3cf202835b7b1584a2106d4292656d88e1ae
-cp %{_builddir}/mariadb-10.4.21/storage/tokudb/PerconaFT/third_party/snappy-1.1.2/COPYING %{buildroot}/usr/share/package-licenses/mariadb/e1bc53918267ae9884c8da7c6d02865fe7c90d94
-cp %{_builddir}/mariadb-10.4.21/storage/tokudb/PerconaFT/third_party/xz-4.999.9beta/COPYING %{buildroot}/usr/share/package-licenses/mariadb/c2caebe256c984f8484ae3e776200bfc17d35dda
-cp %{_builddir}/mariadb-10.4.21/storage/tokudb/PerconaFT/third_party/xz-4.999.9beta/COPYING.GPLv2 %{buildroot}/usr/share/package-licenses/mariadb/793d3cf202835b7b1584a2106d4292656d88e1ae
-cp %{_builddir}/mariadb-10.4.21/storage/tokudb/PerconaFT/third_party/xz-4.999.9beta/COPYING.GPLv3 %{buildroot}/usr/share/package-licenses/mariadb/8624bcdae55baeef00cd11d5dfcfa60f68710a02
-cp %{_builddir}/mariadb-10.4.21/storage/tokudb/PerconaFT/third_party/xz-4.999.9beta/COPYING.LGPLv2.1 %{buildroot}/usr/share/package-licenses/mariadb/c0422cb05a3a12e1ff514bbd9c5fd4882c48d378
-cp %{_builddir}/mariadb-10.4.21/vio/docs/COPYING.openssl %{buildroot}/usr/share/package-licenses/mariadb/7907ce0c0a371f3efe022b224eeebf5898f2bf8c
-cp %{_builddir}/mariadb-10.4.21/win/packaging/COPYING.rtf %{buildroot}/usr/share/package-licenses/mariadb/ebebbb6bb4a431d7099e28f3fd1817a2bfdb1f72
-cp %{_builddir}/mariadb-10.4.21/wsrep-lib/COPYING %{buildroot}/usr/share/package-licenses/mariadb/47aad6f6cae3514cdd9b80bb32587bf81d3b1fc0
-cp %{_builddir}/mariadb-10.4.21/wsrep-lib/LICENSE %{buildroot}/usr/share/package-licenses/mariadb/4cc77b90af91e615a64ae04893fdffa7939db84c
-cp %{_builddir}/mariadb-10.4.21/wsrep-lib/wsrep-API/v26/COPYING %{buildroot}/usr/share/package-licenses/mariadb/4cc77b90af91e615a64ae04893fdffa7939db84c
+cp %{_builddir}/mariadb-10.6.5/COPYING %{buildroot}/usr/share/package-licenses/mariadb/793d3cf202835b7b1584a2106d4292656d88e1ae
+cp %{_builddir}/mariadb-10.6.5/extra/readline/COPYING %{buildroot}/usr/share/package-licenses/mariadb/4231152540c27f86b02f96e73605e1ff18d2ee95
+cp %{_builddir}/mariadb-10.6.5/extra/wolfssl/wolfssl/COPYING %{buildroot}/usr/share/package-licenses/mariadb/4cc77b90af91e615a64ae04893fdffa7939db84c
+cp %{_builddir}/mariadb-10.6.5/libmariadb/COPYING.LIB %{buildroot}/usr/share/package-licenses/mariadb/01a6b4bf79aca9b556822601186afab86e8c4fbf
+cp %{_builddir}/mariadb-10.6.5/libmariadb/cmake/COPYING-CMAKE-SCRIPTS %{buildroot}/usr/share/package-licenses/mariadb/ff3ed70db4739b3c6747c7f624fe2bad70802987
+cp %{_builddir}/mariadb-10.6.5/plugin/handler_socket/handlersocket/COPYRIGHT.txt %{buildroot}/usr/share/package-licenses/mariadb/3914c2c16582bb3e404a22557a1f6b3c73db23a8
+cp %{_builddir}/mariadb-10.6.5/plugin/handler_socket/libhsclient/COPYRIGHT.txt %{buildroot}/usr/share/package-licenses/mariadb/3914c2c16582bb3e404a22557a1f6b3c73db23a8
+cp %{_builddir}/mariadb-10.6.5/plugin/handler_socket/perl-Net-HandlerSocket/COPYRIGHT.txt %{buildroot}/usr/share/package-licenses/mariadb/3914c2c16582bb3e404a22557a1f6b3c73db23a8
+cp %{_builddir}/mariadb-10.6.5/plugin/server_audit/COPYING %{buildroot}/usr/share/package-licenses/mariadb/793d3cf202835b7b1584a2106d4292656d88e1ae
+cp %{_builddir}/mariadb-10.6.5/plugin/test_sql_service/COPYING %{buildroot}/usr/share/package-licenses/mariadb/793d3cf202835b7b1584a2106d4292656d88e1ae
+cp %{_builddir}/mariadb-10.6.5/scripts/sys_schema/COPYING %{buildroot}/usr/share/package-licenses/mariadb/06877624ea5c77efe3b7e39b0f909eda6e25a4ec
+cp %{_builddir}/mariadb-10.6.5/storage/columnstore/columnstore/COPYING %{buildroot}/usr/share/package-licenses/mariadb/68c94ffc34f8ad2d7bfae3f5a6b996409211c1b1
+cp %{_builddir}/mariadb-10.6.5/storage/columnstore/columnstore/oam/oamcpp/COPYING %{buildroot}/usr/share/package-licenses/mariadb/b3aebbdebf056cbf1cb73b76edf8ea105c37239d
+cp %{_builddir}/mariadb-10.6.5/storage/columnstore/columnstore/utils/libmarias3/libmarias3/LICENSE %{buildroot}/usr/share/package-licenses/mariadb/01a6b4bf79aca9b556822601186afab86e8c4fbf
+cp %{_builddir}/mariadb-10.6.5/storage/innobase/COPYING.Google %{buildroot}/usr/share/package-licenses/mariadb/21c6e1c3c9ef7e68ec6cf63b3efda490e81ba26a
+cp %{_builddir}/mariadb-10.6.5/storage/innobase/COPYING.Percona %{buildroot}/usr/share/package-licenses/mariadb/8065fd50693d562d8f14d53ca84db13df5280c47
+cp %{_builddir}/mariadb-10.6.5/storage/maria/libmarias3/LICENSE %{buildroot}/usr/share/package-licenses/mariadb/01a6b4bf79aca9b556822601186afab86e8c4fbf
+cp %{_builddir}/mariadb-10.6.5/storage/mroonga/COPYING %{buildroot}/usr/share/package-licenses/mariadb/d4c4fe8d1effe5471779e799caaa09cbb54e5b3f
+cp %{_builddir}/mariadb-10.6.5/storage/mroonga/vendor/groonga/COPYING %{buildroot}/usr/share/package-licenses/mariadb/5db84f12bde6c5e77125936e1470be0f400ece5f
+cp %{_builddir}/mariadb-10.6.5/storage/mroonga/vendor/groonga/vendor/plugins/groonga-normalizer-mysql/packages/debian/copyright %{buildroot}/usr/share/package-licenses/mariadb/60d021148ab131e6640e0edd7801f12f02a384e1
+cp %{_builddir}/mariadb-10.6.5/storage/rocksdb/rocksdb/COPYING %{buildroot}/usr/share/package-licenses/mariadb/4cc77b90af91e615a64ae04893fdffa7939db84c
+cp %{_builddir}/mariadb-10.6.5/storage/rocksdb/rocksdb/LICENSE.Apache %{buildroot}/usr/share/package-licenses/mariadb/2b8b815229aa8a61e483fb4ba0588b8b6c491890
+cp %{_builddir}/mariadb-10.6.5/storage/rocksdb/rocksdb/LICENSE.leveldb %{buildroot}/usr/share/package-licenses/mariadb/59f297dcc2fbc8f9f3a966fd5290d72837fd6455
+cp %{_builddir}/mariadb-10.6.5/storage/rocksdb/rocksdb/docs/LICENSE-DOCUMENTATION %{buildroot}/usr/share/package-licenses/mariadb/420cc096d9ce8dfabee4082196acb0383377f202
+cp %{_builddir}/mariadb-10.6.5/vio/docs/COPYING.openssl %{buildroot}/usr/share/package-licenses/mariadb/7907ce0c0a371f3efe022b224eeebf5898f2bf8c
+cp %{_builddir}/mariadb-10.6.5/win/packaging/COPYING.rtf %{buildroot}/usr/share/package-licenses/mariadb/ebebbb6bb4a431d7099e28f3fd1817a2bfdb1f72
+cp %{_builddir}/mariadb-10.6.5/wsrep-lib/COPYING %{buildroot}/usr/share/package-licenses/mariadb/47aad6f6cae3514cdd9b80bb32587bf81d3b1fc0
+cp %{_builddir}/mariadb-10.6.5/wsrep-lib/LICENSE %{buildroot}/usr/share/package-licenses/mariadb/4cc77b90af91e615a64ae04893fdffa7939db84c
+cp %{_builddir}/mariadb-10.6.5/wsrep-lib/wsrep-API/v26/COPYING %{buildroot}/usr/share/package-licenses/mariadb/4cc77b90af91e615a64ae04893fdffa7939db84c
 pushd clr-build-avx2
 %make_install_v3  || :
 popd
@@ -362,6 +369,9 @@ chmod -s %{buildroot}*/usr/lib64/mysql/plugin/auth_pam_tool_dir/auth_pam_tool
 /usr/bin/aria_ftdump
 /usr/bin/aria_pack
 /usr/bin/aria_read_log
+/usr/bin/aria_s3_copy
+/usr/bin/galera_new_cluster
+/usr/bin/galera_recovery
 /usr/bin/innochecksum
 /usr/bin/mariabackup
 /usr/bin/mariadb
@@ -371,6 +381,8 @@ chmod -s %{buildroot}*/usr/lib64/mysql/plugin/auth_pam_tool_dir/auth_pam_tool
 /usr/bin/mariadb-binlog
 /usr/bin/mariadb-check
 /usr/bin/mariadb-client-test
+/usr/bin/mariadb-config
+/usr/bin/mariadb-conv
 /usr/bin/mariadb-convert-table-format
 /usr/bin/mariadb-dump
 /usr/bin/mariadb-dumpslow
@@ -382,6 +394,7 @@ chmod -s %{buildroot}*/usr/lib64/mysql/plugin/auth_pam_tool_dir/auth_pam_tool
 /usr/bin/mariadb-ldb
 /usr/bin/mariadb-plugin
 /usr/bin/mariadb-secure-installation
+/usr/bin/mariadb-service-convert
 /usr/bin/mariadb-setpermission
 /usr/bin/mariadb-show
 /usr/bin/mariadb-slap
@@ -448,18 +461,20 @@ chmod -s %{buildroot}*/usr/lib64/mysql/plugin/auth_pam_tool_dir/auth_pam_tool
 
 %files config
 %defattr(-,root,root,-)
+/usr/lib/sysusers.d/mariadb.conf
 /usr/lib/tmpfiles.d/mariadb.conf
 
 %files data
 %defattr(-,root,root,-)
 /usr/share/aclocal/mysql/aclocal/mysql.m4
-/usr/share/defaults/mariadb/init.d/mysql
 /usr/share/defaults/mariadb/logrotate.d/mysql
 /usr/share/defaults/mariadb/my.cnf
 /usr/share/defaults/mariadb/my.cnf.d/client.cnf
 /usr/share/defaults/mariadb/my.cnf.d/enable_encryption.preset
 /usr/share/defaults/mariadb/my.cnf.d/mysql-clients.cnf
+/usr/share/defaults/mariadb/my.cnf.d/s3.cnf
 /usr/share/defaults/mariadb/my.cnf.d/server.cnf
+/usr/share/defaults/mariadb/my.cnf.d/spider.cnf
 /usr/share/mariadb/binary-configure
 /usr/share/mariadb/charsets/Index.xml
 /usr/share/mariadb/charsets/README
@@ -499,7 +514,6 @@ chmod -s %{buildroot}*/usr/lib64/mysql/plugin/auth_pam_tool_dir/auth_pam_tool
 /usr/share/mariadb/greek/errmsg.sys
 /usr/share/mariadb/hindi/errmsg.sys
 /usr/share/mariadb/hungarian/errmsg.sys
-/usr/share/mariadb/install_spider.sql
 /usr/share/mariadb/italian/errmsg.sys
 /usr/share/mariadb/japanese/errmsg.sys
 /usr/share/mariadb/korean/errmsg.sys
@@ -509,6 +523,7 @@ chmod -s %{buildroot}*/usr/lib64/mysql/plugin/auth_pam_tool_dir/auth_pam_tool
 /usr/share/mariadb/mysql-log-rotate
 /usr/share/mariadb/mysql.server
 /usr/share/mariadb/mysql_performance_tables.sql
+/usr/share/mariadb/mysql_sys_schema.sql
 /usr/share/mariadb/mysql_system_tables.sql
 /usr/share/mariadb/mysql_system_tables_data.sql
 /usr/share/mariadb/mysql_test_data_timezone.sql
@@ -531,6 +546,13 @@ chmod -s %{buildroot}*/usr/lib64/mysql/plugin/auth_pam_tool_dir/auth_pam_tool
 /usr/share/mariadb/slovak/errmsg.sys
 /usr/share/mariadb/spanish/errmsg.sys
 /usr/share/mariadb/swedish/errmsg.sys
+/usr/share/mariadb/systemd/mariadb-extra@.socket
+/usr/share/mariadb/systemd/mariadb.service
+/usr/share/mariadb/systemd/mariadb@.service
+/usr/share/mariadb/systemd/mariadb@.socket
+/usr/share/mariadb/systemd/mysql.service
+/usr/share/mariadb/systemd/mysqld.service
+/usr/share/mariadb/systemd/use_galera_new_cluster.conf
 /usr/share/mariadb/ukrainian/errmsg.sys
 /usr/share/mariadb/wsrep.cnf
 /usr/share/mariadb/wsrep_notify
@@ -596,16 +618,23 @@ chmod -s %{buildroot}*/usr/lib64/mysql/plugin/auth_pam_tool_dir/auth_pam_tool
 /usr/include/mysql/server/mysql/plugin_audit.h
 /usr/include/mysql/server/mysql/plugin_auth.h
 /usr/include/mysql/server/mysql/plugin_auth_common.h
+/usr/include/mysql/server/mysql/plugin_data_type.h
 /usr/include/mysql/server/mysql/plugin_encryption.h
 /usr/include/mysql/server/mysql/plugin_ftparser.h
+/usr/include/mysql/server/mysql/plugin_function.h
 /usr/include/mysql/server/mysql/plugin_password_validation.h
 /usr/include/mysql/server/mysql/psi/mysql_file.h
 /usr/include/mysql/server/mysql/psi/mysql_idle.h
+/usr/include/mysql/server/mysql/psi/mysql_mdl.h
+/usr/include/mysql/server/mysql/psi/mysql_memory.h
+/usr/include/mysql/server/mysql/psi/mysql_ps.h
 /usr/include/mysql/server/mysql/psi/mysql_socket.h
+/usr/include/mysql/server/mysql/psi/mysql_sp.h
 /usr/include/mysql/server/mysql/psi/mysql_stage.h
 /usr/include/mysql/server/mysql/psi/mysql_statement.h
 /usr/include/mysql/server/mysql/psi/mysql_table.h
 /usr/include/mysql/server/mysql/psi/mysql_thread.h
+/usr/include/mysql/server/mysql/psi/mysql_transaction.h
 /usr/include/mysql/server/mysql/psi/psi.h
 /usr/include/mysql/server/mysql/psi/psi_abi_v0.h
 /usr/include/mysql/server/mysql/psi/psi_abi_v1.h
@@ -629,6 +658,7 @@ chmod -s %{buildroot}*/usr/lib64/mysql/plugin/auth_pam_tool_dir/auth_pam_tool
 /usr/include/mysql/server/mysql/service_thd_alloc.h
 /usr/include/mysql/server/mysql/service_thd_autoinc.h
 /usr/include/mysql/server/mysql/service_thd_error_context.h
+/usr/include/mysql/server/mysql/service_thd_mdl.h
 /usr/include/mysql/server/mysql/service_thd_rnd.h
 /usr/include/mysql/server/mysql/service_thd_specifics.h
 /usr/include/mysql/server/mysql/service_thd_timezone.h
@@ -644,6 +674,7 @@ chmod -s %{buildroot}*/usr/lib64/mysql/plugin/auth_pam_tool_dir/auth_pam_tool
 /usr/include/mysql/server/mysqld_error.h
 /usr/include/mysql/server/pack.h
 /usr/include/mysql/server/private/aria_backup.h
+/usr/include/mysql/server/private/assume_aligned.h
 /usr/include/mysql/server/private/atomic/gcc_builtins.h
 /usr/include/mysql/server/private/atomic/generic-msvc.h
 /usr/include/mysql/server/private/atomic/solaris.h
@@ -655,8 +686,11 @@ chmod -s %{buildroot}*/usr/lib64/mysql/plugin/auth_pam_tool_dir/auth_pam_tool
 /usr/include/mysql/server/private/config.h
 /usr/include/mysql/server/private/contributors.h
 /usr/include/mysql/server/private/create_options.h
+/usr/include/mysql/server/private/create_tmp_table.h
 /usr/include/mysql/server/private/custom_conf.h
 /usr/include/mysql/server/private/datadict.h
+/usr/include/mysql/server/private/ddl_log.h
+/usr/include/mysql/server/private/debug.h
 /usr/include/mysql/server/private/debug_sync.h
 /usr/include/mysql/server/private/derived_handler.h
 /usr/include/mysql/server/private/derror.h
@@ -677,6 +711,7 @@ chmod -s %{buildroot}*/usr/lib64/mysql/plugin/auth_pam_tool_dir/auth_pam_tool
 /usr/include/mysql/server/private/ft_global.h
 /usr/include/mysql/server/private/gcalc_slicescan.h
 /usr/include/mysql/server/private/gcalc_tools.h
+/usr/include/mysql/server/private/grant.h
 /usr/include/mysql/server/private/group_by_handler.h
 /usr/include/mysql/server/private/gstream.h
 /usr/include/mysql/server/private/ha_partition.h
@@ -695,7 +730,6 @@ chmod -s %{buildroot}*/usr/lib64/mysql/plugin/auth_pam_tool_dir/auth_pam_tool
 /usr/include/mysql/server/private/item_create.h
 /usr/include/mysql/server/private/item_func.h
 /usr/include/mysql/server/private/item_geofunc.h
-/usr/include/mysql/server/private/item_inetfunc.h
 /usr/include/mysql/server/private/item_jsonfunc.h
 /usr/include/mysql/server/private/item_row.h
 /usr/include/mysql/server/private/item_strfunc.h
@@ -705,6 +739,7 @@ chmod -s %{buildroot}*/usr/lib64/mysql/plugin/auth_pam_tool_dir/auth_pam_tool
 /usr/include/mysql/server/private/item_vers.h
 /usr/include/mysql/server/private/item_windowfunc.h
 /usr/include/mysql/server/private/item_xmlfunc.h
+/usr/include/mysql/server/private/json_table.h
 /usr/include/mysql/server/private/key.h
 /usr/include/mysql/server/private/keycaches.h
 /usr/include/mysql/server/private/lex.h
@@ -731,7 +766,6 @@ chmod -s %{buildroot}*/usr/lib64/mysql/plugin/auth_pam_tool_dir/auth_pam_tool
 /usr/include/mysql/server/private/my_bitmap.h
 /usr/include/mysql/server/private/my_check_opt.h
 /usr/include/mysql/server/private/my_compare.h
-/usr/include/mysql/server/private/my_context.h
 /usr/include/mysql/server/private/my_counter.h
 /usr/include/mysql/server/private/my_cpu.h
 /usr/include/mysql/server/private/my_crypt.h
@@ -741,10 +775,12 @@ chmod -s %{buildroot}*/usr/lib64/mysql/plugin/auth_pam_tool_dir/auth_pam_tool
 /usr/include/mysql/server/private/my_json_writer.h
 /usr/include/mysql/server/private/my_libwrap.h
 /usr/include/mysql/server/private/my_md5.h
+/usr/include/mysql/server/private/my_minidump.h
 /usr/include/mysql/server/private/my_nosys.h
 /usr/include/mysql/server/private/my_rdtsc.h
 /usr/include/mysql/server/private/my_rnd.h
 /usr/include/mysql/server/private/my_service_manager.h
+/usr/include/mysql/server/private/my_stack_alloc.h
 /usr/include/mysql/server/private/my_stacktrace.h
 /usr/include/mysql/server/private/my_time.h
 /usr/include/mysql/server/private/my_tree.h
@@ -754,12 +790,10 @@ chmod -s %{buildroot}*/usr/lib64/mysql/plugin/auth_pam_tool_dir/auth_pam_tool
 /usr/include/mysql/server/private/myisamchk.h
 /usr/include/mysql/server/private/myisammrg.h
 /usr/include/mysql/server/private/myisampack.h
-/usr/include/mysql/server/private/mysql_async.h
 /usr/include/mysql/server/private/mysqld.h
 /usr/include/mysql/server/private/mysqld_default_groups.h
 /usr/include/mysql/server/private/mysqld_suffix.h
 /usr/include/mysql/server/private/mysys_err.h
-/usr/include/mysql/server/private/nt_servc.h
 /usr/include/mysql/server/private/opt_range.h
 /usr/include/mysql/server/private/opt_subselect.h
 /usr/include/mysql/server/private/opt_trace.h
@@ -768,7 +802,17 @@ chmod -s %{buildroot}*/usr/lib64/mysql/plugin/auth_pam_tool_dir/auth_pam_tool
 /usr/include/mysql/server/private/partition_element.h
 /usr/include/mysql/server/private/partition_info.h
 /usr/include/mysql/server/private/password.h
-/usr/include/mysql/server/private/pcre.h
+/usr/include/mysql/server/private/pfs_file_provider.h
+/usr/include/mysql/server/private/pfs_idle_provider.h
+/usr/include/mysql/server/private/pfs_memory_provider.h
+/usr/include/mysql/server/private/pfs_metadata_provider.h
+/usr/include/mysql/server/private/pfs_socket_provider.h
+/usr/include/mysql/server/private/pfs_stage_provider.h
+/usr/include/mysql/server/private/pfs_statement_provider.h
+/usr/include/mysql/server/private/pfs_table_provider.h
+/usr/include/mysql/server/private/pfs_thread_provider.h
+/usr/include/mysql/server/private/pfs_transaction_provider.h
+/usr/include/mysql/server/private/privilege.h
 /usr/include/mysql/server/private/probes_mysql.h
 /usr/include/mysql/server/private/probes_mysql_nodtrace.h
 /usr/include/mysql/server/private/procedure.h
@@ -846,10 +890,12 @@ chmod -s %{buildroot}*/usr/lib64/mysql/plugin/auth_pam_tool_dir/auth_pam_tool
 /usr/include/mysql/server/private/sql_handler.h
 /usr/include/mysql/server/private/sql_help.h
 /usr/include/mysql/server/private/sql_hset.h
+/usr/include/mysql/server/private/sql_i_s.h
 /usr/include/mysql/server/private/sql_insert.h
 /usr/include/mysql/server/private/sql_join_cache.h
 /usr/include/mysql/server/private/sql_lex.h
 /usr/include/mysql/server/private/sql_lifo_buffer.h
+/usr/include/mysql/server/private/sql_limit.h
 /usr/include/mysql/server/private/sql_list.h
 /usr/include/mysql/server/private/sql_load.h
 /usr/include/mysql/server/private/sql_locale.h
@@ -884,9 +930,11 @@ chmod -s %{buildroot}*/usr/lib64/mysql/plugin/auth_pam_tool_dir/auth_pam_tool
 /usr/include/mysql/server/private/sql_truncate.h
 /usr/include/mysql/server/private/sql_tvc.h
 /usr/include/mysql/server/private/sql_type.h
+/usr/include/mysql/server/private/sql_type_geom.h
 /usr/include/mysql/server/private/sql_type_int.h
 /usr/include/mysql/server/private/sql_type_json.h
 /usr/include/mysql/server/private/sql_type_real.h
+/usr/include/mysql/server/private/sql_type_string.h
 /usr/include/mysql/server/private/sql_udf.h
 /usr/include/mysql/server/private/sql_union.h
 /usr/include/mysql/server/private/sql_update.h
@@ -903,15 +951,16 @@ chmod -s %{buildroot}*/usr/lib64/mysql/plugin/auth_pam_tool_dir/auth_pam_tool
 /usr/include/mysql/server/private/thr_lock.h
 /usr/include/mysql/server/private/thr_malloc.h
 /usr/include/mysql/server/private/thr_timer.h
-/usr/include/mysql/server/private/thread_pool_priv.h
+/usr/include/mysql/server/private/thread_cache.h
 /usr/include/mysql/server/private/threadpool.h
+/usr/include/mysql/server/private/threadpool_generic.h
+/usr/include/mysql/server/private/threadpool_winsockets.h
 /usr/include/mysql/server/private/transaction.h
 /usr/include/mysql/server/private/tzfile.h
 /usr/include/mysql/server/private/tztime.h
 /usr/include/mysql/server/private/uniques.h
 /usr/include/mysql/server/private/unireg.h
 /usr/include/mysql/server/private/vers_string.h
-/usr/include/mysql/server/private/vers_utils.h
 /usr/include/mysql/server/private/violite.h
 /usr/include/mysql/server/private/waiting_threads.h
 /usr/include/mysql/server/private/welcome_copyright_notice.h
@@ -949,6 +998,126 @@ chmod -s %{buildroot}*/usr/lib64/mysql/plugin/auth_pam_tool_dir/auth_pam_tool
 /usr/include/mysql/server/typelib.h
 /usr/lib64/pkgconfig/libmariadb.pc
 /usr/lib64/pkgconfig/mariadb.pc
+/usr/share/man/man3/mariadb_cancel.3
+/usr/share/man/man3/mariadb_connection.3
+/usr/share/man/man3/mariadb_dyncol_check.3
+/usr/share/man/man3/mariadb_dyncol_column_cmp_named.3
+/usr/share/man/man3/mariadb_dyncol_column_count.3
+/usr/share/man/man3/mariadb_dyncol_create_many_named.3
+/usr/share/man/man3/mariadb_dyncol_create_many_num.3
+/usr/share/man/man3/mariadb_dyncol_exists_named.3
+/usr/share/man/man3/mariadb_dyncol_exists_num.3
+/usr/share/man/man3/mariadb_dyncol_free.3
+/usr/share/man/man3/mariadb_dyncol_list_named.3
+/usr/share/man/man3/mariadb_dyncol_list_num.3
+/usr/share/man/man3/mariadb_dyncol_unpack.3
+/usr/share/man/man3/mariadb_dyncol_update_many_named.3
+/usr/share/man/man3/mariadb_dyncol_update_many_num.3
+/usr/share/man/man3/mariadb_get_infov.3
+/usr/share/man/man3/mariadb_reconnect.3
+/usr/share/man/man3/mariadb_rpl_close.3
+/usr/share/man/man3/mariadb_rpl_fetch.3
+/usr/share/man/man3/mariadb_rpl_get_optionsv.3
+/usr/share/man/man3/mariadb_rpl_open.3
+/usr/share/man/man3/mariadb_rpl_optionsv.3
+/usr/share/man/man3/mariadb_stmt_execute_direct.3
+/usr/share/man/man3/mariadb_stmt_fetch_fields.3
+/usr/share/man/man3/mysql_affected_rows.3
+/usr/share/man/man3/mysql_autocommit.3
+/usr/share/man/man3/mysql_change_user.3
+/usr/share/man/man3/mysql_close.3
+/usr/share/man/man3/mysql_commit.3
+/usr/share/man/man3/mysql_data_seek.3
+/usr/share/man/man3/mysql_errno.3
+/usr/share/man/man3/mysql_error.3
+/usr/share/man/man3/mysql_fetch_field.3
+/usr/share/man/man3/mysql_fetch_field_direct.3
+/usr/share/man/man3/mysql_fetch_fields.3
+/usr/share/man/man3/mysql_fetch_lengths.3
+/usr/share/man/man3/mysql_fetch_row.3
+/usr/share/man/man3/mysql_field_count.3
+/usr/share/man/man3/mysql_field_seek.3
+/usr/share/man/man3/mysql_field_tell.3
+/usr/share/man/man3/mysql_free_result.3
+/usr/share/man/man3/mysql_get_character_set_info.3
+/usr/share/man/man3/mysql_get_client_info.3
+/usr/share/man/man3/mysql_get_client_version.3
+/usr/share/man/man3/mysql_get_host_info.3
+/usr/share/man/man3/mysql_get_proto_info.3
+/usr/share/man/man3/mysql_get_server_info.3
+/usr/share/man/man3/mysql_get_server_version.3
+/usr/share/man/man3/mysql_get_socket.3
+/usr/share/man/man3/mysql_get_ssl_cipher.3
+/usr/share/man/man3/mysql_hex_string.3
+/usr/share/man/man3/mysql_info.3
+/usr/share/man/man3/mysql_init.3
+/usr/share/man/man3/mysql_kill.3
+/usr/share/man/man3/mysql_more_results.3
+/usr/share/man/man3/mysql_next_result.3
+/usr/share/man/man3/mysql_num_fields.3
+/usr/share/man/man3/mysql_num_rows.3
+/usr/share/man/man3/mysql_options.3
+/usr/share/man/man3/mysql_options4.3
+/usr/share/man/man3/mysql_optionsv.3
+/usr/share/man/man3/mysql_ping.3
+/usr/share/man/man3/mysql_query.3
+/usr/share/man/man3/mysql_read_query_result.3
+/usr/share/man/man3/mysql_real_connect.3
+/usr/share/man/man3/mysql_real_escape_string.3
+/usr/share/man/man3/mysql_real_query.3
+/usr/share/man/man3/mysql_refresh.3
+/usr/share/man/man3/mysql_reset_connection.3
+/usr/share/man/man3/mysql_rollback.3
+/usr/share/man/man3/mysql_row_seek.3
+/usr/share/man/man3/mysql_row_tell.3
+/usr/share/man/man3/mysql_select_db.3
+/usr/share/man/man3/mysql_send_query.3
+/usr/share/man/man3/mysql_server_end.3
+/usr/share/man/man3/mysql_server_init.3
+/usr/share/man/man3/mysql_session_track_get_first.3
+/usr/share/man/man3/mysql_session_track_get_next.3
+/usr/share/man/man3/mysql_set_character_set.3
+/usr/share/man/man3/mysql_set_server_option.3
+/usr/share/man/man3/mysql_shutdown.3
+/usr/share/man/man3/mysql_sqlstate.3
+/usr/share/man/man3/mysql_ssl_set.3
+/usr/share/man/man3/mysql_stat.3
+/usr/share/man/man3/mysql_stmt_affected_rows.3
+/usr/share/man/man3/mysql_stmt_attr_get.3
+/usr/share/man/man3/mysql_stmt_attr_set.3
+/usr/share/man/man3/mysql_stmt_bind_param.3
+/usr/share/man/man3/mysql_stmt_bind_result.3
+/usr/share/man/man3/mysql_stmt_close.3
+/usr/share/man/man3/mysql_stmt_data_seek.3
+/usr/share/man/man3/mysql_stmt_errno.3
+/usr/share/man/man3/mysql_stmt_error.3
+/usr/share/man/man3/mysql_stmt_execute.3
+/usr/share/man/man3/mysql_stmt_fetch.3
+/usr/share/man/man3/mysql_stmt_fetch_column.3
+/usr/share/man/man3/mysql_stmt_field_count.3
+/usr/share/man/man3/mysql_stmt_free_result.3
+/usr/share/man/man3/mysql_stmt_init.3
+/usr/share/man/man3/mysql_stmt_insert_id.3
+/usr/share/man/man3/mysql_stmt_more_results.3
+/usr/share/man/man3/mysql_stmt_next_result.3
+/usr/share/man/man3/mysql_stmt_num_rows.3
+/usr/share/man/man3/mysql_stmt_param_count.3
+/usr/share/man/man3/mysql_stmt_param_metadata.3
+/usr/share/man/man3/mysql_stmt_prepare.3
+/usr/share/man/man3/mysql_stmt_reset.3
+/usr/share/man/man3/mysql_stmt_result_metadata.3
+/usr/share/man/man3/mysql_stmt_row_seek.3
+/usr/share/man/man3/mysql_stmt_row_tell.3
+/usr/share/man/man3/mysql_stmt_send_long_data.3
+/usr/share/man/man3/mysql_stmt_sqlstate.3
+/usr/share/man/man3/mysql_stmt_store_result.3
+/usr/share/man/man3/mysql_stmt_warning_count.3
+/usr/share/man/man3/mysql_store_result.3
+/usr/share/man/man3/mysql_thread_end.3
+/usr/share/man/man3/mysql_thread_id.3
+/usr/share/man/man3/mysql_thread_init.3
+/usr/share/man/man3/mysql_use_result.3
+/usr/share/man/man3/mysql_warning_count.3
 
 %files doc
 %defattr(0644,root,root,0755)
@@ -993,6 +1162,7 @@ chmod -s %{buildroot}*/usr/lib64/mysql/plugin/auth_pam_tool_dir/auth_pam_tool
 /usr/lib64/mysql/plugin/disks.so
 /usr/lib64/mysql/plugin/example_key_management.so
 /usr/lib64/mysql/plugin/file_key_management.so
+/usr/lib64/mysql/plugin/func_test.so
 /usr/lib64/mysql/plugin/ha_archive.so
 /usr/lib64/mysql/plugin/ha_blackhole.so
 /usr/lib64/mysql/plugin/ha_connect.so
@@ -1000,6 +1170,7 @@ chmod -s %{buildroot}*/usr/lib64/mysql/plugin/auth_pam_tool_dir/auth_pam_tool
 /usr/lib64/mysql/plugin/ha_federated.so
 /usr/lib64/mysql/plugin/ha_federatedx.so
 /usr/lib64/mysql/plugin/ha_rocksdb.so
+/usr/lib64/mysql/plugin/ha_s3.so
 /usr/lib64/mysql/plugin/ha_sphinx.so
 /usr/lib64/mysql/plugin/ha_spider.so
 /usr/lib64/mysql/plugin/ha_test_sql_discovery.so
@@ -1018,7 +1189,10 @@ chmod -s %{buildroot}*/usr/lib64/mysql/plugin/auth_pam_tool_dir/auth_pam_tool
 /usr/lib64/mysql/plugin/sha256_password.so
 /usr/lib64/mysql/plugin/simple_password_check.so
 /usr/lib64/mysql/plugin/sql_errlog.so
+/usr/lib64/mysql/plugin/test_sql_service.so
 /usr/lib64/mysql/plugin/test_versioning.so
+/usr/lib64/mysql/plugin/type_mysql_json.so
+/usr/lib64/mysql/plugin/type_test.so
 /usr/lib64/mysql/plugin/wsrep_info.so
 /usr/lib64/security/pam_user_map.so
 /usr/share/clear/optimized-elf/lib*
@@ -1027,6 +1201,7 @@ chmod -s %{buildroot}*/usr/lib64/mysql/plugin/auth_pam_tool_dir/auth_pam_tool
 %files license
 %defattr(0644,root,root,0755)
 /usr/share/package-licenses/mariadb/01a6b4bf79aca9b556822601186afab86e8c4fbf
+/usr/share/package-licenses/mariadb/06877624ea5c77efe3b7e39b0f909eda6e25a4ec
 /usr/share/package-licenses/mariadb/21c6e1c3c9ef7e68ec6cf63b3efda490e81ba26a
 /usr/share/package-licenses/mariadb/2b8b815229aa8a61e483fb4ba0588b8b6c491890
 /usr/share/package-licenses/mariadb/3914c2c16582bb3e404a22557a1f6b3c73db23a8
@@ -1037,17 +1212,12 @@ chmod -s %{buildroot}*/usr/lib64/mysql/plugin/auth_pam_tool_dir/auth_pam_tool
 /usr/share/package-licenses/mariadb/59f297dcc2fbc8f9f3a966fd5290d72837fd6455
 /usr/share/package-licenses/mariadb/5db84f12bde6c5e77125936e1470be0f400ece5f
 /usr/share/package-licenses/mariadb/60d021148ab131e6640e0edd7801f12f02a384e1
-/usr/share/package-licenses/mariadb/77c56994eb0a7752cf9b508dc4682ddce91828bf
-/usr/share/package-licenses/mariadb/78e50e186b04c8fe1defaa098f1c192181b3d837
+/usr/share/package-licenses/mariadb/68c94ffc34f8ad2d7bfae3f5a6b996409211c1b1
 /usr/share/package-licenses/mariadb/7907ce0c0a371f3efe022b224eeebf5898f2bf8c
 /usr/share/package-licenses/mariadb/793d3cf202835b7b1584a2106d4292656d88e1ae
 /usr/share/package-licenses/mariadb/8065fd50693d562d8f14d53ca84db13df5280c47
-/usr/share/package-licenses/mariadb/8624bcdae55baeef00cd11d5dfcfa60f68710a02
-/usr/share/package-licenses/mariadb/936db4f914d8b9a516ac93a3bf7856c8bfeb6855
-/usr/share/package-licenses/mariadb/c0422cb05a3a12e1ff514bbd9c5fd4882c48d378
-/usr/share/package-licenses/mariadb/c2caebe256c984f8484ae3e776200bfc17d35dda
+/usr/share/package-licenses/mariadb/b3aebbdebf056cbf1cb73b76edf8ea105c37239d
 /usr/share/package-licenses/mariadb/d4c4fe8d1effe5471779e799caaa09cbb54e5b3f
-/usr/share/package-licenses/mariadb/e1bc53918267ae9884c8da7c6d02865fe7c90d94
 /usr/share/package-licenses/mariadb/ebebbb6bb4a431d7099e28f3fd1817a2bfdb1f72
 /usr/share/package-licenses/mariadb/ff3ed70db4739b3c6747c7f624fe2bad70802987
 
@@ -1058,6 +1228,7 @@ chmod -s %{buildroot}*/usr/lib64/mysql/plugin/auth_pam_tool_dir/auth_pam_tool
 /usr/share/man/man1/aria_ftdump.1
 /usr/share/man/man1/aria_pack.1
 /usr/share/man/man1/aria_read_log.1
+/usr/share/man/man1/aria_s3_copy.1
 /usr/share/man/man1/galera_new_cluster.1
 /usr/share/man/man1/galera_recovery.1
 /usr/share/man/man1/innochecksum.1
@@ -1069,6 +1240,7 @@ chmod -s %{buildroot}*/usr/lib64/mysql/plugin/auth_pam_tool_dir/auth_pam_tool
 /usr/share/man/man1/mariadb-check.1
 /usr/share/man/man1/mariadb-client-test-embedded.1
 /usr/share/man/man1/mariadb-client-test.1
+/usr/share/man/man1/mariadb-conv.1
 /usr/share/man/man1/mariadb-convert-table-format.1
 /usr/share/man/man1/mariadb-dump.1
 /usr/share/man/man1/mariadb-dumpslow.1
@@ -1091,6 +1263,7 @@ chmod -s %{buildroot}*/usr/lib64/mysql/plugin/auth_pam_tool_dir/auth_pam_tool
 /usr/share/man/man1/mariadb-upgrade.1
 /usr/share/man/man1/mariadb-waitpid.1
 /usr/share/man/man1/mariadb.1
+/usr/share/man/man1/mariadb_config.1
 /usr/share/man/man1/mariadbd-multi.1
 /usr/share/man/man1/mariadbd-safe-helper.1
 /usr/share/man/man1/mariadbd-safe.1
@@ -1102,6 +1275,7 @@ chmod -s %{buildroot}*/usr/lib64/mysql/plugin/auth_pam_tool_dir/auth_pam_tool
 /usr/share/man/man1/myisamchk.1
 /usr/share/man/man1/myisamlog.1
 /usr/share/man/man1/myisampack.1
+/usr/share/man/man1/myrocks_hotbackup.1
 /usr/share/man/man1/mysql-stress-test.pl.1
 /usr/share/man/man1/mysql-test-run.pl.1
 /usr/share/man/man1/mysql.1
@@ -1136,6 +1310,7 @@ chmod -s %{buildroot}*/usr/lib64/mysql/plugin/auth_pam_tool_dir/auth_pam_tool
 /usr/share/man/man1/mysqlslap.1
 /usr/share/man/man1/mysqltest.1
 /usr/share/man/man1/mysqltest_embedded.1
+/usr/share/man/man1/mytop.1
 /usr/share/man/man1/perror.1
 /usr/share/man/man1/replace.1
 /usr/share/man/man1/resolve_stack_dump.1
@@ -1150,5 +1325,13 @@ chmod -s %{buildroot}*/usr/lib64/mysql/plugin/auth_pam_tool_dir/auth_pam_tool
 
 %files services
 %defattr(-,root,root,-)
+/usr/lib/systemd/system/mariadb-extra.socket
+/usr/lib/systemd/system/mariadb-extra@.socket
 /usr/lib/systemd/system/mariadb-install-db.service
 /usr/lib/systemd/system/mariadb.service
+/usr/lib/systemd/system/mariadb.socket
+/usr/lib/systemd/system/mariadb@.service
+/usr/lib/systemd/system/mariadb@.socket
+/usr/lib/systemd/system/mariadb@bootstrap.service.d/use_galera_new_cluster.conf
+/usr/lib/systemd/system/mysql.service
+/usr/lib/systemd/system/mysqld.service

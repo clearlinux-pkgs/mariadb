@@ -11,3 +11,9 @@ boost-dev
 libxml2-dev
 pcre-dev
 perl(Test::More)
+pcre2-dev
+liburing-dev
+systemd-dev
+numactl-dev
+xz-dev
+lz4-dev

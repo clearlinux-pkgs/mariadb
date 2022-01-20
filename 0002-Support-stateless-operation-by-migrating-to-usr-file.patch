@@ -57,7 +57,7 @@ index 7c6ef8ff..323035b1 100644
 +            fn_format(tmp, search_file->name, ptr, "",
 +                      MY_UNPACK_FILENAME | MY_SAFE_PATH);
 +
-+            search_default_file_with_ext(opt_handler, handler_ctx, "", "", tmp,
++            search_default_file_with_ext(ctx, "", "", tmp,
 +                                         recursion_level + 1);
 +          }
 +        }
