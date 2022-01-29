@@ -6,7 +6,7 @@
 #
 Name     : mariadb
 Version  : 10.6.5
-Release  : 93
+Release  : 94
 URL      : https://ftp.osuosl.org/pub/mariadb/mariadb-10.6.5/source/mariadb-10.6.5.tar.gz
 Source0  : https://ftp.osuosl.org/pub/mariadb/mariadb-10.6.5/source/mariadb-10.6.5.tar.gz
 Source1  : mariadb-install-db.service
