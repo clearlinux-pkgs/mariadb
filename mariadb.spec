@@ -5,14 +5,14 @@
 # Source0 file verified with key 0xCBCB082A1BB943DB (package-signing-key@mariadb.org)
 #
 Name     : mariadb
-Version  : 10.6.5
-Release  : 95
-URL      : https://ftp.osuosl.org/pub/mariadb/mariadb-10.6.5/source/mariadb-10.6.5.tar.gz
-Source0  : https://ftp.osuosl.org/pub/mariadb/mariadb-10.6.5/source/mariadb-10.6.5.tar.gz
+Version  : 10.6.7
+Release  : 96
+URL      : https://ftp.osuosl.org/pub/mariadb/mariadb-10.6.7/source/mariadb-10.6.7.tar.gz
+Source0  : https://ftp.osuosl.org/pub/mariadb/mariadb-10.6.7/source/mariadb-10.6.7.tar.gz
 Source1  : mariadb-install-db.service
 Source2  : mariadb.service
 Source3  : mariadb.tmpfiles
-Source4  : https://ftp.osuosl.org/pub/mariadb/mariadb-10.6.5/source/mariadb-10.6.5.tar.gz.asc
+Source4  : https://ftp.osuosl.org/pub/mariadb/mariadb-10.6.7/source/mariadb-10.6.7.tar.gz.asc
 Summary  : Open source relational database
 Group    : Development/Tools
 License  : Apache-2.0 BSD-3-Clause CC-BY-4.0 GPL-2.0 LGPL-2.1 OpenSSL
@@ -182,8 +182,8 @@ services components for the mariadb package.
 
 
 %prep
-%setup -q -n mariadb-10.6.5
-cd %{_builddir}/mariadb-10.6.5
+%setup -q -n mariadb-10.6.7
+cd %{_builddir}/mariadb-10.6.7
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
@@ -194,7 +194,7 @@ export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C.UTF-8
-export SOURCE_DATE_EPOCH=1642722670
+export SOURCE_DATE_EPOCH=1645033628
 mkdir -p clr-build
 pushd clr-build
 export GCC_IGNORE_WERROR=1
@@ -303,38 +303,44 @@ pushd clr-build/mysql-test
 popd
 
 %install
-export SOURCE_DATE_EPOCH=1642722670
+export SOURCE_DATE_EPOCH=1645033628
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/package-licenses/mariadb
-cp %{_builddir}/mariadb-10.6.5/COPYING %{buildroot}/usr/share/package-licenses/mariadb/793d3cf202835b7b1584a2106d4292656d88e1ae
-cp %{_builddir}/mariadb-10.6.5/extra/readline/COPYING %{buildroot}/usr/share/package-licenses/mariadb/4231152540c27f86b02f96e73605e1ff18d2ee95
-cp %{_builddir}/mariadb-10.6.5/extra/wolfssl/wolfssl/COPYING %{buildroot}/usr/share/package-licenses/mariadb/4cc77b90af91e615a64ae04893fdffa7939db84c
-cp %{_builddir}/mariadb-10.6.5/libmariadb/COPYING.LIB %{buildroot}/usr/share/package-licenses/mariadb/01a6b4bf79aca9b556822601186afab86e8c4fbf
-cp %{_builddir}/mariadb-10.6.5/libmariadb/cmake/COPYING-CMAKE-SCRIPTS %{buildroot}/usr/share/package-licenses/mariadb/ff3ed70db4739b3c6747c7f624fe2bad70802987
-cp %{_builddir}/mariadb-10.6.5/plugin/handler_socket/handlersocket/COPYRIGHT.txt %{buildroot}/usr/share/package-licenses/mariadb/3914c2c16582bb3e404a22557a1f6b3c73db23a8
-cp %{_builddir}/mariadb-10.6.5/plugin/handler_socket/libhsclient/COPYRIGHT.txt %{buildroot}/usr/share/package-licenses/mariadb/3914c2c16582bb3e404a22557a1f6b3c73db23a8
-cp %{_builddir}/mariadb-10.6.5/plugin/handler_socket/perl-Net-HandlerSocket/COPYRIGHT.txt %{buildroot}/usr/share/package-licenses/mariadb/3914c2c16582bb3e404a22557a1f6b3c73db23a8
-cp %{_builddir}/mariadb-10.6.5/plugin/server_audit/COPYING %{buildroot}/usr/share/package-licenses/mariadb/793d3cf202835b7b1584a2106d4292656d88e1ae
-cp %{_builddir}/mariadb-10.6.5/plugin/test_sql_service/COPYING %{buildroot}/usr/share/package-licenses/mariadb/793d3cf202835b7b1584a2106d4292656d88e1ae
-cp %{_builddir}/mariadb-10.6.5/scripts/sys_schema/COPYING %{buildroot}/usr/share/package-licenses/mariadb/06877624ea5c77efe3b7e39b0f909eda6e25a4ec
-cp %{_builddir}/mariadb-10.6.5/storage/columnstore/columnstore/COPYING %{buildroot}/usr/share/package-licenses/mariadb/68c94ffc34f8ad2d7bfae3f5a6b996409211c1b1
-cp %{_builddir}/mariadb-10.6.5/storage/columnstore/columnstore/oam/oamcpp/COPYING %{buildroot}/usr/share/package-licenses/mariadb/b3aebbdebf056cbf1cb73b76edf8ea105c37239d
-cp %{_builddir}/mariadb-10.6.5/storage/columnstore/columnstore/utils/libmarias3/libmarias3/LICENSE %{buildroot}/usr/share/package-licenses/mariadb/01a6b4bf79aca9b556822601186afab86e8c4fbf
-cp %{_builddir}/mariadb-10.6.5/storage/innobase/COPYING.Google %{buildroot}/usr/share/package-licenses/mariadb/21c6e1c3c9ef7e68ec6cf63b3efda490e81ba26a
-cp %{_builddir}/mariadb-10.6.5/storage/innobase/COPYING.Percona %{buildroot}/usr/share/package-licenses/mariadb/8065fd50693d562d8f14d53ca84db13df5280c47
-cp %{_builddir}/mariadb-10.6.5/storage/maria/libmarias3/LICENSE %{buildroot}/usr/share/package-licenses/mariadb/01a6b4bf79aca9b556822601186afab86e8c4fbf
-cp %{_builddir}/mariadb-10.6.5/storage/mroonga/COPYING %{buildroot}/usr/share/package-licenses/mariadb/d4c4fe8d1effe5471779e799caaa09cbb54e5b3f
-cp %{_builddir}/mariadb-10.6.5/storage/mroonga/vendor/groonga/COPYING %{buildroot}/usr/share/package-licenses/mariadb/5db84f12bde6c5e77125936e1470be0f400ece5f
-cp %{_builddir}/mariadb-10.6.5/storage/mroonga/vendor/groonga/vendor/plugins/groonga-normalizer-mysql/packages/debian/copyright %{buildroot}/usr/share/package-licenses/mariadb/60d021148ab131e6640e0edd7801f12f02a384e1
-cp %{_builddir}/mariadb-10.6.5/storage/rocksdb/rocksdb/COPYING %{buildroot}/usr/share/package-licenses/mariadb/4cc77b90af91e615a64ae04893fdffa7939db84c
-cp %{_builddir}/mariadb-10.6.5/storage/rocksdb/rocksdb/LICENSE.Apache %{buildroot}/usr/share/package-licenses/mariadb/2b8b815229aa8a61e483fb4ba0588b8b6c491890
-cp %{_builddir}/mariadb-10.6.5/storage/rocksdb/rocksdb/LICENSE.leveldb %{buildroot}/usr/share/package-licenses/mariadb/59f297dcc2fbc8f9f3a966fd5290d72837fd6455
-cp %{_builddir}/mariadb-10.6.5/storage/rocksdb/rocksdb/docs/LICENSE-DOCUMENTATION %{buildroot}/usr/share/package-licenses/mariadb/420cc096d9ce8dfabee4082196acb0383377f202
-cp %{_builddir}/mariadb-10.6.5/vio/docs/COPYING.openssl %{buildroot}/usr/share/package-licenses/mariadb/7907ce0c0a371f3efe022b224eeebf5898f2bf8c
-cp %{_builddir}/mariadb-10.6.5/win/packaging/COPYING.rtf %{buildroot}/usr/share/package-licenses/mariadb/ebebbb6bb4a431d7099e28f3fd1817a2bfdb1f72
-cp %{_builddir}/mariadb-10.6.5/wsrep-lib/COPYING %{buildroot}/usr/share/package-licenses/mariadb/47aad6f6cae3514cdd9b80bb32587bf81d3b1fc0
-cp %{_builddir}/mariadb-10.6.5/wsrep-lib/LICENSE %{buildroot}/usr/share/package-licenses/mariadb/4cc77b90af91e615a64ae04893fdffa7939db84c
-cp %{_builddir}/mariadb-10.6.5/wsrep-lib/wsrep-API/v26/COPYING %{buildroot}/usr/share/package-licenses/mariadb/4cc77b90af91e615a64ae04893fdffa7939db84c
+cp %{_builddir}/mariadb-10.6.7/COPYING %{buildroot}/usr/share/package-licenses/mariadb/793d3cf202835b7b1584a2106d4292656d88e1ae
+cp %{_builddir}/mariadb-10.6.7/extra/readline/COPYING %{buildroot}/usr/share/package-licenses/mariadb/4231152540c27f86b02f96e73605e1ff18d2ee95
+cp %{_builddir}/mariadb-10.6.7/extra/wolfssl/wolfssl/COPYING %{buildroot}/usr/share/package-licenses/mariadb/4cc77b90af91e615a64ae04893fdffa7939db84c
+cp %{_builddir}/mariadb-10.6.7/libmariadb/COPYING.LIB %{buildroot}/usr/share/package-licenses/mariadb/01a6b4bf79aca9b556822601186afab86e8c4fbf
+cp %{_builddir}/mariadb-10.6.7/libmariadb/cmake/COPYING-CMAKE-SCRIPTS %{buildroot}/usr/share/package-licenses/mariadb/ff3ed70db4739b3c6747c7f624fe2bad70802987
+cp %{_builddir}/mariadb-10.6.7/plugin/handler_socket/handlersocket/COPYRIGHT.txt %{buildroot}/usr/share/package-licenses/mariadb/3914c2c16582bb3e404a22557a1f6b3c73db23a8
+cp %{_builddir}/mariadb-10.6.7/plugin/handler_socket/libhsclient/COPYRIGHT.txt %{buildroot}/usr/share/package-licenses/mariadb/3914c2c16582bb3e404a22557a1f6b3c73db23a8
+cp %{_builddir}/mariadb-10.6.7/plugin/handler_socket/perl-Net-HandlerSocket/COPYRIGHT.txt %{buildroot}/usr/share/package-licenses/mariadb/3914c2c16582bb3e404a22557a1f6b3c73db23a8
+cp %{_builddir}/mariadb-10.6.7/plugin/server_audit/COPYING %{buildroot}/usr/share/package-licenses/mariadb/793d3cf202835b7b1584a2106d4292656d88e1ae
+cp %{_builddir}/mariadb-10.6.7/plugin/test_sql_service/COPYING %{buildroot}/usr/share/package-licenses/mariadb/793d3cf202835b7b1584a2106d4292656d88e1ae
+cp %{_builddir}/mariadb-10.6.7/scripts/sys_schema/COPYING %{buildroot}/usr/share/package-licenses/mariadb/06877624ea5c77efe3b7e39b0f909eda6e25a4ec
+cp %{_builddir}/mariadb-10.6.7/scripts/sys_schema/LICENSE %{buildroot}/usr/share/package-licenses/mariadb/cdee1053a5302f5bd7ff2235a96d17c3c03ecd5c
+cp %{_builddir}/mariadb-10.6.7/storage/columnstore/columnstore/COPYING %{buildroot}/usr/share/package-licenses/mariadb/68c94ffc34f8ad2d7bfae3f5a6b996409211c1b1
+cp %{_builddir}/mariadb-10.6.7/storage/columnstore/columnstore/LICENSE.md %{buildroot}/usr/share/package-licenses/mariadb/7ef0f1c84d9b22a046df5af1de92f44837236897
+cp %{_builddir}/mariadb-10.6.7/storage/columnstore/columnstore/oam/oamcpp/COPYING %{buildroot}/usr/share/package-licenses/mariadb/b3aebbdebf056cbf1cb73b76edf8ea105c37239d
+cp %{_builddir}/mariadb-10.6.7/storage/columnstore/columnstore/utils/libmarias3/libmarias3/LICENSE %{buildroot}/usr/share/package-licenses/mariadb/01a6b4bf79aca9b556822601186afab86e8c4fbf
+cp %{_builddir}/mariadb-10.6.7/storage/columnstore/columnstore/utils/libmarias3/libmarias3/debian/copyright %{buildroot}/usr/share/package-licenses/mariadb/46f1ac02159de45661948c23d007cf0ea989b459
+cp %{_builddir}/mariadb-10.6.7/storage/columnstore/columnstore/utils/libmarias3/libmarias3/docs/introduction/license.rst %{buildroot}/usr/share/package-licenses/mariadb/040852207fc71d5144d9a73952f3c5b54003e89c
+cp %{_builddir}/mariadb-10.6.7/storage/innobase/COPYING.Google %{buildroot}/usr/share/package-licenses/mariadb/21c6e1c3c9ef7e68ec6cf63b3efda490e81ba26a
+cp %{_builddir}/mariadb-10.6.7/storage/innobase/COPYING.Percona %{buildroot}/usr/share/package-licenses/mariadb/8065fd50693d562d8f14d53ca84db13df5280c47
+cp %{_builddir}/mariadb-10.6.7/storage/maria/libmarias3/LICENSE %{buildroot}/usr/share/package-licenses/mariadb/01a6b4bf79aca9b556822601186afab86e8c4fbf
+cp %{_builddir}/mariadb-10.6.7/storage/maria/libmarias3/debian/copyright %{buildroot}/usr/share/package-licenses/mariadb/46f1ac02159de45661948c23d007cf0ea989b459
+cp %{_builddir}/mariadb-10.6.7/storage/maria/libmarias3/docs/introduction/license.rst %{buildroot}/usr/share/package-licenses/mariadb/040852207fc71d5144d9a73952f3c5b54003e89c
+cp %{_builddir}/mariadb-10.6.7/storage/mroonga/COPYING %{buildroot}/usr/share/package-licenses/mariadb/d4c4fe8d1effe5471779e799caaa09cbb54e5b3f
+cp %{_builddir}/mariadb-10.6.7/storage/mroonga/vendor/groonga/COPYING %{buildroot}/usr/share/package-licenses/mariadb/5db84f12bde6c5e77125936e1470be0f400ece5f
+cp %{_builddir}/mariadb-10.6.7/storage/mroonga/vendor/groonga/vendor/plugins/groonga-normalizer-mysql/packages/debian/copyright %{buildroot}/usr/share/package-licenses/mariadb/60d021148ab131e6640e0edd7801f12f02a384e1
+cp %{_builddir}/mariadb-10.6.7/storage/rocksdb/rocksdb/COPYING %{buildroot}/usr/share/package-licenses/mariadb/4cc77b90af91e615a64ae04893fdffa7939db84c
+cp %{_builddir}/mariadb-10.6.7/storage/rocksdb/rocksdb/LICENSE.Apache %{buildroot}/usr/share/package-licenses/mariadb/2b8b815229aa8a61e483fb4ba0588b8b6c491890
+cp %{_builddir}/mariadb-10.6.7/storage/rocksdb/rocksdb/LICENSE.leveldb %{buildroot}/usr/share/package-licenses/mariadb/59f297dcc2fbc8f9f3a966fd5290d72837fd6455
+cp %{_builddir}/mariadb-10.6.7/storage/rocksdb/rocksdb/docs/LICENSE-DOCUMENTATION %{buildroot}/usr/share/package-licenses/mariadb/420cc096d9ce8dfabee4082196acb0383377f202
+cp %{_builddir}/mariadb-10.6.7/vio/docs/COPYING.openssl %{buildroot}/usr/share/package-licenses/mariadb/7907ce0c0a371f3efe022b224eeebf5898f2bf8c
+cp %{_builddir}/mariadb-10.6.7/win/packaging/COPYING.rtf %{buildroot}/usr/share/package-licenses/mariadb/ebebbb6bb4a431d7099e28f3fd1817a2bfdb1f72
+cp %{_builddir}/mariadb-10.6.7/wsrep-lib/COPYING %{buildroot}/usr/share/package-licenses/mariadb/47aad6f6cae3514cdd9b80bb32587bf81d3b1fc0
+cp %{_builddir}/mariadb-10.6.7/wsrep-lib/LICENSE %{buildroot}/usr/share/package-licenses/mariadb/4cc77b90af91e615a64ae04893fdffa7939db84c
+cp %{_builddir}/mariadb-10.6.7/wsrep-lib/wsrep-API/v26/COPYING %{buildroot}/usr/share/package-licenses/mariadb/4cc77b90af91e615a64ae04893fdffa7939db84c
 pushd clr-build-avx2
 %make_install_v3  || :
 popd
@@ -1202,12 +1208,14 @@ chmod -s %{buildroot}*/usr/lib64/mysql/plugin/auth_pam_tool_dir/auth_pam_tool
 %files license
 %defattr(0644,root,root,0755)
 /usr/share/package-licenses/mariadb/01a6b4bf79aca9b556822601186afab86e8c4fbf
+/usr/share/package-licenses/mariadb/040852207fc71d5144d9a73952f3c5b54003e89c
 /usr/share/package-licenses/mariadb/06877624ea5c77efe3b7e39b0f909eda6e25a4ec
 /usr/share/package-licenses/mariadb/21c6e1c3c9ef7e68ec6cf63b3efda490e81ba26a
 /usr/share/package-licenses/mariadb/2b8b815229aa8a61e483fb4ba0588b8b6c491890
 /usr/share/package-licenses/mariadb/3914c2c16582bb3e404a22557a1f6b3c73db23a8
 /usr/share/package-licenses/mariadb/420cc096d9ce8dfabee4082196acb0383377f202
 /usr/share/package-licenses/mariadb/4231152540c27f86b02f96e73605e1ff18d2ee95
+/usr/share/package-licenses/mariadb/46f1ac02159de45661948c23d007cf0ea989b459
 /usr/share/package-licenses/mariadb/47aad6f6cae3514cdd9b80bb32587bf81d3b1fc0
 /usr/share/package-licenses/mariadb/4cc77b90af91e615a64ae04893fdffa7939db84c
 /usr/share/package-licenses/mariadb/59f297dcc2fbc8f9f3a966fd5290d72837fd6455
@@ -1216,8 +1224,10 @@ chmod -s %{buildroot}*/usr/lib64/mysql/plugin/auth_pam_tool_dir/auth_pam_tool
 /usr/share/package-licenses/mariadb/68c94ffc34f8ad2d7bfae3f5a6b996409211c1b1
 /usr/share/package-licenses/mariadb/7907ce0c0a371f3efe022b224eeebf5898f2bf8c
 /usr/share/package-licenses/mariadb/793d3cf202835b7b1584a2106d4292656d88e1ae
+/usr/share/package-licenses/mariadb/7ef0f1c84d9b22a046df5af1de92f44837236897
 /usr/share/package-licenses/mariadb/8065fd50693d562d8f14d53ca84db13df5280c47
 /usr/share/package-licenses/mariadb/b3aebbdebf056cbf1cb73b76edf8ea105c37239d
+/usr/share/package-licenses/mariadb/cdee1053a5302f5bd7ff2235a96d17c3c03ecd5c
 /usr/share/package-licenses/mariadb/d4c4fe8d1effe5471779e799caaa09cbb54e5b3f
 /usr/share/package-licenses/mariadb/ebebbb6bb4a431d7099e28f3fd1817a2bfdb1f72
 /usr/share/package-licenses/mariadb/ff3ed70db4739b3c6747c7f624fe2bad70802987
