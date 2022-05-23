@@ -13,10 +13,10 @@ Make sure to add `includeoptdir` in startupscript.
  3 files changed, 44 insertions(+), 1 deletion(-)
 
 diff --git a/mysys/my_default.c b/mysys/my_default.c
-index 7c6ef8ff..323035b1 100644
+index cc4462a2..a7ba1fab 100644
 --- a/mysys/my_default.c
 +++ b/mysys/my_default.c
-@@ -757,6 +757,7 @@ static int search_default_file_with_ext(Process_option_func opt_handler,
+@@ -597,6 +597,7 @@ static int search_default_file_with_ext(struct handle_option_ctx *ctx,
    char name[FN_REFLEN + 10], buff[4096], curr_gr[4096], *ptr, *end, **tmp_ext;
    char *value, option[4096+2], tmp[FN_REFLEN];
    static const char includedir_keyword[]= "includedir";
@@ -24,7 +24,7 @@ index 7c6ef8ff..323035b1 100644
    static const char include_keyword[]= "include";
    const int max_recursion_level= 10;
    MYSQL_FILE *fp;
-@@ -869,6 +870,42 @@ static int search_default_file_with_ext(Process_option_func opt_handler,
+@@ -713,6 +714,42 @@ static int search_default_file_with_ext(struct handle_option_ctx *ctx,
  
          my_dirend(search_dir);
        }
@@ -67,19 +67,19 @@ index 7c6ef8ff..323035b1 100644
        else if ((!strncmp(ptr, include_keyword, sizeof(include_keyword) - 1)) &&
                 my_isspace(&my_charset_latin1, ptr[sizeof(include_keyword)-1]))
        {
-@@ -992,6 +1029,7 @@ static int search_default_file_with_ext(Process_option_func opt_handler,
-         goto err;
-     }
+@@ -830,6 +867,7 @@ static int search_default_file_with_ext(struct handle_option_ctx *ctx,
+     if (add_option(ctx, option))
+       goto err;
    }
 + nonfatal:
    mysql_file_fclose(fp, MYF(0));
    return(0);
  
 diff --git a/scripts/mysqld_multi.sh b/scripts/mysqld_multi.sh
-index 77ed3621..68e8eb59 100644
+index 28c39090..4b7127ee 100644
 --- a/scripts/mysqld_multi.sh
 +++ b/scripts/mysqld_multi.sh
-@@ -579,6 +579,10 @@ sub find_groups
+@@ -670,6 +670,10 @@ sub find_groups
        {
          push @defaults_files, <$1/*.cnf>;
        }

@@ -10,10 +10,10 @@ at all.
  1 file changed, 2 insertions(+), 1 deletion(-)
 
 diff --git a/sql/mysqld.cc b/sql/mysqld.cc
-index 7e3ce878..d232ec7a 100644
+index 854fcd61..883b1b6e 100644
 --- a/sql/mysqld.cc
 +++ b/sql/mysqld.cc
-@@ -8052,7 +8052,8 @@ static int mysql_init_variables(void)
+@@ -7679,7 +7679,8 @@ static int mysql_init_variables(void)
    max_used_connections= slow_launch_threads = 0;
    mysqld_user= mysqld_chroot= opt_init_file= opt_bin_logname = 0;
    prepared_stmt_count= 0;

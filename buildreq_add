@@ -1,19 +1,19 @@
 # This file contains additional build requirements that did not get
 # picked up automatically. One name per line, no whitespace.
-openssl-dev
+Linux-PAM-dev
+bison
+boost-dev
 jemalloc-dev
 libaio-dev
-bison
-Linux-PAM-dev
-zlib-dev
-ncurses-dev
-boost-dev
-libxml2-dev
-pcre-dev
-perl(Test::More)
-pcre2-dev
 liburing-dev
-systemd-dev
-numactl-dev
-xz-dev
+libxml2-dev
 lz4-dev
+ncurses-dev
+numactl-dev
+openssl-dev
+pcre-dev
+pcre2-dev
+perl(Test::More)
+systemd-dev
+xz-dev
+zlib-dev
