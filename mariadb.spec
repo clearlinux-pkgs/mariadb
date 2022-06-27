@@ -6,7 +6,7 @@
 #
 Name     : mariadb
 Version  : 10.6.8
-Release  : 97
+Release  : 98
 URL      : https://ftp.osuosl.org/pub/mariadb/mariadb-10.6.8/source/mariadb-10.6.8.tar.gz
 Source0  : https://ftp.osuosl.org/pub/mariadb/mariadb-10.6.8/source/mariadb-10.6.8.tar.gz
 Source1  : mariadb-install-db.service
@@ -47,8 +47,8 @@ BuildRequires : libxml2-dev
 BuildRequires : lz4-dev
 BuildRequires : ncurses-dev
 BuildRequires : numactl-dev
-BuildRequires : openjdk11
-BuildRequires : openjdk11-dev
+BuildRequires : openjdk
+BuildRequires : openjdk-dev
 BuildRequires : openssl-dev
 BuildRequires : pcre-dev
 BuildRequires : pcre2-dev
@@ -194,7 +194,7 @@ export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C.UTF-8
-export SOURCE_DATE_EPOCH=1653326204
+export SOURCE_DATE_EPOCH=1656372109
 mkdir -p clr-build
 pushd clr-build
 export GCC_IGNORE_WERROR=1
@@ -243,10 +243,10 @@ popd
 mkdir -p clr-build-avx2
 pushd clr-build-avx2
 export GCC_IGNORE_WERROR=1
-export CFLAGS="$CFLAGS -O3 -Wl,-z,x86-64-v3 -fno-lto -march=x86-64-v3 -mtune=skylake "
-export FCFLAGS="$FFLAGS -O3 -Wl,-z,x86-64-v3 -fno-lto -march=x86-64-v3 -mtune=skylake "
-export FFLAGS="$FFLAGS -O3 -Wl,-z,x86-64-v3 -fno-lto -march=x86-64-v3 -mtune=skylake "
-export CXXFLAGS="$CXXFLAGS -O3 -Wl,-z,x86-64-v3 -fno-lto -march=x86-64-v3 -mtune=skylake "
+export CFLAGS="$CFLAGS -O3 -Wl,-z,x86-64-v3 -fno-lto -march=x86-64-v3 -msse2avx -mtune=skylake "
+export FCFLAGS="$FFLAGS -O3 -Wl,-z,x86-64-v3 -fno-lto -march=x86-64-v3 -msse2avx -mtune=skylake "
+export FFLAGS="$FFLAGS -O3 -Wl,-z,x86-64-v3 -fno-lto -march=x86-64-v3 -msse2avx -mtune=skylake "
+export CXXFLAGS="$CXXFLAGS -O3 -Wl,-z,x86-64-v3 -fno-lto -march=x86-64-v3 -msse2avx -mtune=skylake "
 export CFLAGS="$CFLAGS -march=x86-64-v3 -m64 -Wl,-z,x86-64-v3"
 export CXXFLAGS="$CXXFLAGS -march=x86-64-v3 -m64 -Wl,-z,x86-64-v3"
 export FFLAGS="$FFLAGS -march=x86-64-v3 -m64 -Wl,-z,x86-64-v3"
@@ -303,7 +303,7 @@ pushd clr-build/mysql-test
 popd
 
 %install
-export SOURCE_DATE_EPOCH=1653326204
+export SOURCE_DATE_EPOCH=1656372109
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/package-licenses/mariadb
 cp %{_builddir}/mariadb-10.6.8/COPYING %{buildroot}/usr/share/package-licenses/mariadb/793d3cf202835b7b1584a2106d4292656d88e1ae
@@ -363,7 +363,7 @@ mv %{buildroot}-v3/usr/bin/wsrep_sst_common %{buildroot}-v3/usr/share/mariadb/
 ln -s ../share/mariadb/wsrep_sst_common %{buildroot}/usr/bin/wsrep_sst_common
 chmod -s %{buildroot}*/usr/lib64/mysql/plugin/auth_pam_tool_dir/auth_pam_tool
 ## install_append end
-/usr/bin/elf-move.py avx2 %{buildroot}-v3 %{buildroot}/usr/share/clear/optimized-elf/ %{buildroot}/usr/share/clear/filemap/filemap-%{name}
+/usr/bin/elf-move.py avx2 %{buildroot}-v3 %{buildroot} %{buildroot}/usr/share/clear/filemap/filemap-%{name}
 
 %files
 %defattr(-,root,root,-)
@@ -1152,6 +1152,13 @@ chmod -s %{buildroot}*/usr/lib64/mysql/plugin/auth_pam_tool_dir/auth_pam_tool
 
 %files lib
 %defattr(-,root,root,-)
+/usr/lib64/glibc-hwcaps/x86-64-v3/libmariadb.so
+/usr/lib64/glibc-hwcaps/x86-64-v3/libmariadb.so.3
+/usr/lib64/glibc-hwcaps/x86-64-v3/libmariadbd.so
+/usr/lib64/glibc-hwcaps/x86-64-v3/libmariadbd.so.19
+/usr/lib64/glibc-hwcaps/x86-64-v3/libmysqlclient.so
+/usr/lib64/glibc-hwcaps/x86-64-v3/libmysqlclient_r.so
+/usr/lib64/glibc-hwcaps/x86-64-v3/libmysqld.so
 /usr/lib64/libmariadb.so
 /usr/lib64/libmariadbd.so
 /usr/lib64/libmariadbd.so.19
@@ -1205,7 +1212,6 @@ chmod -s %{buildroot}*/usr/lib64/mysql/plugin/auth_pam_tool_dir/auth_pam_tool
 /usr/lib64/mysql/plugin/type_test.so
 /usr/lib64/mysql/plugin/wsrep_info.so
 /usr/lib64/security/pam_user_map.so
-/usr/share/clear/optimized-elf/lib*
 /usr/share/clear/optimized-elf/other*
 
 %files license
