@@ -6,7 +6,7 @@
 #
 Name     : mariadb
 Version  : 10.9.2
-Release  : 100
+Release  : 101
 URL      : https://archive.mariadb.org/mariadb-10.9.2/source/mariadb-10.9.2.tar.gz
 Source0  : https://archive.mariadb.org/mariadb-10.9.2/source/mariadb-10.9.2.tar.gz
 Source1  : mariadb-install-db.service
