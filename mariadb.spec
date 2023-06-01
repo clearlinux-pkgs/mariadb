@@ -7,7 +7,7 @@
 #
 Name     : mariadb
 Version  : 10.11.3
-Release  : 104
+Release  : 105
 URL      : https://archive.mariadb.org/mariadb-10.11.3/source/mariadb-10.11.3.tar.gz
 Source0  : https://archive.mariadb.org/mariadb-10.11.3/source/mariadb-10.11.3.tar.gz
 Source1  : mariadb-install-db.service
@@ -185,7 +185,7 @@ export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C.UTF-8
-export SOURCE_DATE_EPOCH=1684342524
+export SOURCE_DATE_EPOCH=1685628468
 mkdir -p clr-build
 pushd clr-build
 export GCC_IGNORE_WERROR=1
@@ -294,7 +294,7 @@ pushd clr-build/mysql-test
 popd
 
 %install
-export SOURCE_DATE_EPOCH=1684342524
+export SOURCE_DATE_EPOCH=1685628468
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/package-licenses/mariadb
 cp %{_builddir}/mariadb-%{version}/COPYING %{buildroot}/usr/share/package-licenses/mariadb/793d3cf202835b7b1584a2106d4292656d88e1ae || :
@@ -371,14 +371,12 @@ chmod -s %{buildroot}*/usr/lib64/mysql/plugin/auth_pam_tool_dir/auth_pam_tool
 /V3/usr/bin/aria_read_log
 /V3/usr/bin/aria_s3_copy
 /V3/usr/bin/innochecksum
-/V3/usr/bin/mariabackup
 /V3/usr/bin/mariadb
 /V3/usr/bin/mariadb-admin
 /V3/usr/bin/mariadb-backup
 /V3/usr/bin/mariadb-binlog
 /V3/usr/bin/mariadb-check
 /V3/usr/bin/mariadb-client-test
-/V3/usr/bin/mariadb-config
 /V3/usr/bin/mariadb-conv
 /V3/usr/bin/mariadb-dump
 /V3/usr/bin/mariadb-import
@@ -399,23 +397,6 @@ chmod -s %{buildroot}*/usr/lib64/mysql/plugin/auth_pam_tool_dir/auth_pam_tool
 /V3/usr/bin/myisamchk
 /V3/usr/bin/myisamlog
 /V3/usr/bin/myisampack
-/V3/usr/bin/mysql
-/V3/usr/bin/mysql_client_test
-/V3/usr/bin/mysql_ldb
-/V3/usr/bin/mysql_plugin
-/V3/usr/bin/mysql_tzinfo_to_sql
-/V3/usr/bin/mysql_upgrade
-/V3/usr/bin/mysql_waitpid
-/V3/usr/bin/mysqladmin
-/V3/usr/bin/mysqlbinlog
-/V3/usr/bin/mysqlcheck
-/V3/usr/bin/mysqld
-/V3/usr/bin/mysqld_safe_helper
-/V3/usr/bin/mysqldump
-/V3/usr/bin/mysqlimport
-/V3/usr/bin/mysqlshow
-/V3/usr/bin/mysqlslap
-/V3/usr/bin/mysqltest
 /V3/usr/bin/perror
 /V3/usr/bin/replace
 /V3/usr/bin/resolve_stack_dump
@@ -1211,9 +1192,6 @@ chmod -s %{buildroot}*/usr/lib64/mysql/plugin/auth_pam_tool_dir/auth_pam_tool
 /V3/usr/bin/mariadb-client-test-embedded
 /V3/usr/bin/mariadb-embedded
 /V3/usr/bin/mariadb-test-embedded
-/V3/usr/bin/mysql_client_test_embedded
-/V3/usr/bin/mysql_embedded
-/V3/usr/bin/mysqltest_embedded
 /usr/bin/mariadb-client-test-embedded
 /usr/bin/mariadb-embedded
 /usr/bin/mariadb-test-embedded
@@ -1228,12 +1206,7 @@ chmod -s %{buildroot}*/usr/lib64/mysql/plugin/auth_pam_tool_dir/auth_pam_tool
 
 %files lib
 %defattr(-,root,root,-)
-/V3/usr/lib64/libmariadb.so
-/V3/usr/lib64/libmariadbd.so
 /V3/usr/lib64/libmariadbd.so.19
-/V3/usr/lib64/libmysqlclient.so
-/V3/usr/lib64/libmysqlclient_r.so
-/V3/usr/lib64/libmysqld.so
 /V3/usr/lib64/mysql/plugin/adt_null.so
 /V3/usr/lib64/mysql/plugin/auth_0x0100.so
 /V3/usr/lib64/mysql/plugin/auth_ed25519.so
