@@ -7,7 +7,7 @@
 #
 Name     : mariadb
 Version  : 10.11.3
-Release  : 105
+Release  : 106
 URL      : https://archive.mariadb.org/mariadb-10.11.3/source/mariadb-10.11.3.tar.gz
 Source0  : https://archive.mariadb.org/mariadb-10.11.3/source/mariadb-10.11.3.tar.gz
 Source1  : mariadb-install-db.service
@@ -175,17 +175,17 @@ services components for the mariadb package.
 %prep
 %setup -q -n mariadb-10.11.3
 cd %{_builddir}/mariadb-10.11.3
-%patch1 -p1
-%patch2 -p1
-%patch3 -p1
-%patch4 -p1
+%patch -P 1 -p1
+%patch -P 2 -p1
+%patch -P 3 -p1
+%patch -P 4 -p1
 
 %build
 export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C.UTF-8
-export SOURCE_DATE_EPOCH=1685628468
+export SOURCE_DATE_EPOCH=1689808701
 mkdir -p clr-build
 pushd clr-build
 export GCC_IGNORE_WERROR=1
@@ -294,7 +294,7 @@ pushd clr-build/mysql-test
 popd
 
 %install
-export SOURCE_DATE_EPOCH=1685628468
+export SOURCE_DATE_EPOCH=1689808701
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/package-licenses/mariadb
 cp %{_builddir}/mariadb-%{version}/COPYING %{buildroot}/usr/share/package-licenses/mariadb/793d3cf202835b7b1584a2106d4292656d88e1ae || :

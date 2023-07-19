@@ -7,7 +7,7 @@ libcurl.so.4
 liblz4.so.1
 liblzma.so.5
 libm.so.6
-libncurses.so.6
+libncursesw.so.6
 libnuma.so.1
 libpam.so.0
 libpcre2-8.so.0
@@ -16,7 +16,6 @@ libsnappy.so.1
 libssl.so.3
 libstdc++.so.6
 libsystemd.so.0
-libtinfo.so.6
 liburing.so.2
 libxml2.so.2
 libz.so.1
