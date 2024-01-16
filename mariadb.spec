@@ -7,7 +7,7 @@
 #
 Name     : mariadb
 Version  : 10.11.3
-Release  : 109
+Release  : 110
 URL      : https://archive.mariadb.org/mariadb-10.11.3/source/mariadb-10.11.3.tar.gz
 Source0  : https://archive.mariadb.org/mariadb-10.11.3/source/mariadb-10.11.3.tar.gz
 Source1  : mariadb-install-db.service
