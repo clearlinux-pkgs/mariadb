@@ -10,3 +10,4 @@ libzmq
 msgpack
 onigmo
 valgrind
+liblzma
